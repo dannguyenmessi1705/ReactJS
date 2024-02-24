@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import StarRating from "./StarRating";
 
 const tempMovieData = [
   {
@@ -59,7 +60,8 @@ export default function App() {
   const [loading, setLoading] = useState(false); // loading là một state để xử lý việc loading khi fetch data, nếu data chưa được fetch thì sẽ hiện loading
   const [error, setError] = useState(null); // error là một state để xử lý việc báo lỗi khi fetch data
   const [selectedId, setSelectedId] = useState(null); // selectedId là một state để xử lý việc hiện thông tin phim đã xem
-  const handleSelectMovie = (id) => setSelectedId(selectedId => selectedId === id ? null : id); // handleSelectMovie là một eventHandler để xử lý việc hiện thông tin phim đã xem
+  const handleSelectMovie = (id) =>
+    setSelectedId((selectedId) => (selectedId === id ? null : id)); // handleSelectMovie là một eventHandler để xử lý việc hiện thông tin phim đã xem
   const handleCloseMovie = () => setSelectedId(null); // handleCloseMovie là một eventHandler để xử lý việc đóng thông tin phim đã xem
   useEffect(() => {
     // useEffect sẽ chạy sau khi render xong, nó sẽ mount vào DOM và chạy
@@ -70,7 +72,7 @@ export default function App() {
         setLoading(true); // Nếu data chưa được fetch thì sẽ hiện loading
         setError(""); // fetch được data thì sẽ không có lỗi
         const res = await fetch(
-          `http://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=${query}`
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
         );
         if (!res.ok) throw new Error("Something went wrong"); // Nếu fetch data bị lỗi thì sẽ throw error (mất mạng, api không hoạt động, ...)
         const data = await res.json();
@@ -99,14 +101,19 @@ export default function App() {
         <Box>
           {loading && <Loader />}{" "}
           {/* Nếu data chưa được fetch thì sẽ hiện loading */}
-          {!loading && !error && <MovieList movies={movies} selectMovie={handleSelectMovie}/>}{" "}
+          {!loading && !error && (
+            <MovieList movies={movies} selectMovie={handleSelectMovie} />
+          )}{" "}
           {/* Nếu data đã được fetch và không có lỗi thì sẽ hiện danh sách phim */}
           {error && <ErrorMessage message={error} />}{" "}
           {/* Nếu fetch data bị lỗi thì sẽ báo lỗi */}
         </Box>
         <Box>
           {selectedId ? (
-            <MovieDetails selectedId={selectedId} closeMovie={handleCloseMovie} />
+            <MovieDetails
+              selectedId={selectedId}
+              closeMovie={handleCloseMovie}
+            />
           ) : (
             <>
               <WatchedSummary watched={watched} />
@@ -144,7 +151,7 @@ const MovieList = ({ movies, selectMovie }) => {
   return (
     <ul className="list list-movies">
       {movies?.map((movie) => (
-        <Movie key={movie.imdbID} movie={movie} selectMovie={selectMovie}/>
+        <Movie key={movie.imdbID} movie={movie} selectMovie={selectMovie} />
       ))}
     </ul>
   );
@@ -226,10 +233,11 @@ const Search = ({ query, setQuery }) => {
 // Component NumResults để hiện số lượng phim tìm kiếm được
 const NumResults = ({ movies }) => {
   return (
-    movies && // Nếu có movies thì sẽ hiện số lượng phim tìm kiếm được
-    <p className="num-results">
-      <span>{movies.length}</span> results
-    </p>
+    movies && ( // Nếu có movies thì sẽ hiện số lượng phim tìm kiếm được
+      <p className="num-results">
+        <span>{movies.length}</span> results
+      </p>
+    )
   );
 };
 
@@ -285,10 +293,79 @@ const WatchedMoviesList = ({ watched }) => {
 
 // Component MovieDetails để hiện thông tin phim đã xem
 const MovieDetails = ({ selectedId, closeMovie }) => {
+  const [movie, setMovie] = useState({}); // movie là một state để lưu trữ thông tin phim đã xem
+  const [loading, setLoading] = useState(false); // loading là một state để xử lý việc loading khi fetch data, nếu data chưa được fetch thì sẽ hiện loading
+  useEffect(() => {
+    const loadDetailMovie = async () => {
+      try {
+        setLoading(true); // Nếu data chưa được fetch thì sẽ hiện loading
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`
+        );
+        if (!res.ok) throw new Error("Something went wrong"); // Nếu fetch data bị lỗi thì sẽ throw error (mất mạng, api không hoạt động, ...)
+        const data = await res.json();
+        setMovie(data); // Các state là hàm bất đồng bộ
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false); // Nếu fetch data thành công, hoặc không thì sẽ tắt loading
+      }
+    };
+    loadDetailMovie(); // Nên tạo hàm bất đồng bộ trong useEffect để tránh lỗi
+  }, [selectedId]); // [] là dependency array, nếu có thay đổi về selectId khi chọn movie thì useEffect sẽ chạy lại
+  const {
+    Title: title,
+    Year: year,
+    Poster: poster,
+    Runtime: runtime,
+    imdbRating,
+    Plot: plot,
+    Released: released,
+    Actors: actors,
+    Director: director,
+    Genre: genre,
+  } = movie; // Destructuring object movie
   return (
-    <div className="details">
-      <button className="btn-back" onClick={closeMovie}>&larr;</button>
-      {selectedId}
+    <div className="details"> {/* Container chứa thông tin phim */}
+      {loading ? (
+        <Loader /> // Nếu data chưa được fetch thì sẽ hiện loading
+      ) : (
+        <>
+        <header> {/* Header chứa poster và title */}
+            <button className="btn-back" onClick={closeMovie}>
+              &larr;
+            </button> {/* Button để đóng thông tin phim */}
+            <img src={poster} alt={`Poster of ${movie} movie`} /> {/* Poster */}
+            <div className="details-overview"> {/* Container chứa title, released, runtime, genre, imdbRating */}
+              <h2>{title}</h2>
+              <p>
+                {released} &bull; {runtime} 
+              </p>
+              <p>{genre}</p>
+              <p>
+                <span>⭐️</span>
+                {imdbRating} IMDb rating
+              </p>
+            </div>
+          </header>
+
+          {/* <p>{avgRating}</p> */}
+
+          <section> {/* Section chứa plot, actors, director */}
+            <div className="rating"> {/* Container chứa rating */}
+              <StarRating // Component StarRating
+                maxRating={10} // maxRating
+                size={24} // size
+              />
+            </div>
+            <p>
+              <em>{plot}</em>
+            </p>
+            <p>Starring {actors}</p>
+            <p>Directed by {director}</p>
+          </section>
+        </>
+      )}  
     </div>
   );
 };
