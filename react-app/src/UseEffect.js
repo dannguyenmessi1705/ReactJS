@@ -63,6 +63,10 @@ export default function App() {
   const handleSelectMovie = (id) =>
     setSelectedId((selectedId) => (selectedId === id ? null : id)); // handleSelectMovie là một eventHandler để xử lý việc hiện thông tin phim đã xem
   const handleCloseMovie = () => setSelectedId(null); // handleCloseMovie là một eventHandler để xử lý việc đóng thông tin phim đã xem
+  const handleAddWatched = (movie) =>
+    setWatched((watched) => [...watched, movie]); // handleAddWatched là một eventHandler để xử lý việc thêm phim đã xem, nó sẽ thêm 1 phim mới vào mảng watched
+  const handleDeleteWatched = (id) => 
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id)); // handleDeleteWatched là một eventHandler để xử lý việc xóa phim đã xem, nó sẽ xóa 1 phim đã xem khỏi mảng watched
   useEffect(() => {
     // useEffect sẽ chạy sau khi render xong, nó sẽ mount vào DOM và chạy
     // Nếu không có dependency array thì useEffect sẽ chạy sau mỗi lần render, như vây sẽ gây ra vòng lặp vô hạn
@@ -113,11 +117,13 @@ export default function App() {
             <MovieDetails
               selectedId={selectedId}
               closeMovie={handleCloseMovie}
+              addMovie={handleAddWatched}
+              watched={watched}
             />
           ) : (
             <>
               <WatchedSummary watched={watched} />
-              <WatchedMoviesList watched={watched} />
+              <WatchedMoviesList watched={watched} deleteWatchedMovie={handleDeleteWatched} />
             </>
           )}
         </Box>
@@ -173,6 +179,32 @@ const Movie = ({ movie, selectMovie }) => {
   );
 };
 
+// Component WatchedMovies
+const WatchedMovies = ({ movie, deleteWatchedMovie }) => {
+  return (
+    <li>
+      <img src={movie.Poster} alt={`${movie.Title} poster`} />
+      <h3>{movie.Title}</h3>
+      <div>
+        <p>
+          <span>⭐️</span>
+          <span>{movie.imdbRating}</span>
+        </p>
+        <p>
+          <span>🌟</span>
+          <span>{movie.userRating}</span>
+        </p>
+        <p>
+          <span>⏳</span>
+          <span>{movie.runtime} min</span>
+        </p>
+      </div>
+      {/* Delete button */}
+      <button className="btn-delete" onClick={() => deleteWatchedMovie(movie.imdbID)}>X</button>
+    </li>
+  );
+};
+
 // Component WatchedSummary để hiện thông tin phim đã xem
 const WatchedSummary = ({ watched }) => {
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
@@ -188,11 +220,11 @@ const WatchedSummary = ({ watched }) => {
         </p>
         <p>
           <span>⭐️</span>
-          <span>{avgImdbRating}</span>
+          <span>{avgImdbRating.toFixed(1)}</span>
         </p>
         <p>
           <span>🌟</span>
-          <span>{avgUserRating}</span>
+          <span>{avgUserRating.toFixed(1)}</span>
         </p>
         <p>
           <span>⏳</span>
@@ -260,41 +292,23 @@ const Box = ({ children }) => {
 };
 
 // Component WatchedMoviesList để hiện danh sách phim đã xem
-const WatchedMoviesList = ({ watched }) => {
+const WatchedMoviesList = ({ watched, deleteWatchedMovie }) => {
   return (
     <ul className="list">
       {watched?.map((movie) => (
-        <li key={movie.imdbID}>
-          <img src={movie.Poster} alt={`${movie.Title} poster`} />
-          <h3>{movie.Title}</h3>
-          <div>
-            <p>
-              <span>🗓</span>
-              <span>{movie.Year}</span>
-            </p>
-            <p>
-              <span>⏱</span>
-              <span>{movie.runtime} min</span>
-            </p>
-            <p>
-              <span>⭐️</span>
-              <span>{movie.imdbRating}</span>
-            </p>
-            <p>
-              <span>🌟</span>
-              <span>{movie.userRating}</span>
-            </p>
-          </div>
-        </li>
+        <WatchedMovies key={movie.imdbID} movie={movie} deleteWatchedMovie={deleteWatchedMovie}/>
       ))}
     </ul>
   );
 };
 
 // Component MovieDetails để hiện thông tin phim đã xem
-const MovieDetails = ({ selectedId, closeMovie }) => {
+const MovieDetails = ({ selectedId, closeMovie, addMovie, watched }) => {
   const [movie, setMovie] = useState({}); // movie là một state để lưu trữ thông tin phim đã xem
   const [loading, setLoading] = useState(false); // loading là một state để xử lý việc loading khi fetch data, nếu data chưa được fetch thì sẽ hiện loading
+  const [userRating, setUserRating] = useState(""); // userRating là một state để lưu trữ rating của người dùng
+  const isWatched = watched.some((movie) => movie.imdbID === selectedId); // isWatched là một state để kiểm tra xem phim đã xem chưa
+  const userWatchedRate = watched.find((movie) => movie.imdbID === selectedId)?.userRating; // userWatchedRate lưu trữ rating của người dùng nếu phim đã xem
   useEffect(() => {
     const loadDetailMovie = async () => {
       try {
@@ -325,21 +339,41 @@ const MovieDetails = ({ selectedId, closeMovie }) => {
     Director: director,
     Genre: genre,
   } = movie; // Destructuring object movie
+  const onAddMovie = () => {
+    const newMovie = {
+      imdbID: selectedId,
+      Title: title,
+      Year: year,
+      Poster: poster,
+      runtime: Number(runtime.split(" ")[0]), // runtime: 148 min => runtime: 148
+      imdbRating: Number(imdbRating), // imdbRating là state để lưu trữ rating của imdb
+      userRating: Number(userRating), // userRating là state để lưu trữ rating của người dùng
+    };
+    addMovie(newMovie); // Thêm phim đã xem vào mảng watched
+    closeMovie(); // Đóng thông tin phim sau khi thêm phim đã xem
+  };
   return (
-    <div className="details"> {/* Container chứa thông tin phim */}
+    <div className="details">
+      {" "}
+      {/* Container chứa thông tin phim */}
       {loading ? (
         <Loader /> // Nếu data chưa được fetch thì sẽ hiện loading
       ) : (
         <>
-        <header> {/* Header chứa poster và title */}
+          <header>
+            {" "}
+            {/* Header chứa poster và title */}
             <button className="btn-back" onClick={closeMovie}>
               &larr;
-            </button> {/* Button để đóng thông tin phim */}
+            </button>{" "}
+            {/* Button để đóng thông tin phim */}
             <img src={poster} alt={`Poster of ${movie} movie`} /> {/* Poster */}
-            <div className="details-overview"> {/* Container chứa title, released, runtime, genre, imdbRating */}
+            <div className="details-overview">
+              {" "}
+              {/* Container chứa title, released, runtime, genre, imdbRating */}
               <h2>{title}</h2>
               <p>
-                {released} &bull; {runtime} 
+                {released} &bull; {runtime}
               </p>
               <p>{genre}</p>
               <p>
@@ -351,12 +385,25 @@ const MovieDetails = ({ selectedId, closeMovie }) => {
 
           {/* <p>{avgRating}</p> */}
 
-          <section> {/* Section chứa plot, actors, director */}
-            <div className="rating"> {/* Container chứa rating */}
-              <StarRating // Component StarRating
-                maxRating={10} // maxRating
-                size={24} // size
-              />
+          <section>
+            {/* Section chứa plot, actors, director */}
+            <div className="rating">
+              {isWatched ? (
+                <p>You rated with movie {userWatchedRate}<span>⭐️</span></p>
+              ) : (
+                <>
+                  <StarRating // Component StarRating
+                    maxRating={10} // maxRating
+                    size={24} // size
+                    onSetRating={setUserRating} // onSetRating
+                  />
+                  {userRating > 0 && (
+                    <button className="btn-add" onClick={onAddMovie}>
+                      + Add Movie
+                    </button>
+                  )}
+                </>
+              )}
             </div>
             <p>
               <em>{plot}</em>
@@ -365,7 +412,7 @@ const MovieDetails = ({ selectedId, closeMovie }) => {
             <p>Directed by {director}</p>
           </section>
         </>
-      )}  
+      )}
     </div>
   );
 };
