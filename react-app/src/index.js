@@ -12,7 +12,7 @@ root.render(
   // StrictMode là một công cụ để kiểm tra các warning và cảnh báo trong ứng dụng React (nhưng không phải là một công cụ để kiểm tra lỗi)
   // Thường bỏ đi khi ứng dụng được triển khai (production), chỉ dùng trong quá trình phát triển (development)
   //  {/* <PropsState /> */} {/* Props và State */}
-    // <UseEffect /> // {/* useEffect */}
-    <ConvertCurrency />  // {/* useEffect */}
+    <UseEffect /> // {/* useEffect */}
+    // <ConvertCurrency />  // {/* useEffect */}
 
 );

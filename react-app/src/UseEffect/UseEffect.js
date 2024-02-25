@@ -56,10 +56,14 @@ const average = (arr) =>
 export default function App() {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
   const [loading, setLoading] = useState(false); // loading là một state để xử lý việc loading khi fetch data, nếu data chưa được fetch thì sẽ hiện loading
   const [error, setError] = useState(null); // error là một state để xử lý việc báo lỗi khi fetch data
   const [selectedId, setSelectedId] = useState(null); // selectedId là một state để xử lý việc hiện thông tin phim đã xem
+  // watched là một state để lưu trữ danh sách phim đã xem, nó sẽ lưu vào localStorage, nên sẽ khởi tạo từ localStorage
+  const [watched, setWatched] = useState(() => {
+    const movies = localStorage.getItem("watched");
+    return movies ? JSON.parse(movies): [];
+  }); // Nên truyền callback function vào useState để lấy dữ liệu từ localStorage, khồng truyền trực tiếp localStorage.getItem("watched") vào useState vì nó sẽ chạy mỗi lần render như vậy sẽ gây ra vòng lặp vô hạn
   const handleSelectMovie = (id) =>
     setSelectedId((selectedId) => (selectedId === id ? null : id)); // handleSelectMovie là một eventHandler để xử lý việc hiện thông tin phim đã xem
   const handleCloseMovie = () => setSelectedId(null); // handleCloseMovie là một eventHandler để xử lý việc đóng thông tin phim đã xem
@@ -103,6 +107,11 @@ export default function App() {
       controller.abort(); // Cleanup function để cancel fetch request khi component unmount khỏi DOM hoặc khi query thay đổi (search thay đổi)
     };
   }, [query]); // [] là dependency array, nếu có thay đổi thì useEffect sẽ chạy lại
+
+  // Lưu watched vào localStorage, nên sử dụng useEffect để lưu watched vào localStorage khi watched thay đổi
+  useEffect(() => {
+    localStorage.setItem("watched", JSON.stringify(watched))
+  }, [watched]);
 
   return (
     <>
@@ -407,6 +416,7 @@ const MovieDetails = ({ selectedId, closeMovie, addMovie, watched }) => {
     addMovie(newMovie); // Thêm phim đã xem vào mảng watched
     closeMovie(); // Đóng thông tin phim sau khi thêm phim đã xem
   };
+
   return (
     <div className="details">
       {" "}
