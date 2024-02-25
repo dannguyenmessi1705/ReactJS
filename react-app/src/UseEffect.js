@@ -65,12 +65,12 @@ export default function App() {
   const handleCloseMovie = () => setSelectedId(null); // handleCloseMovie là một eventHandler để xử lý việc đóng thông tin phim đã xem
   const handleAddWatched = (movie) =>
     setWatched((watched) => [...watched, movie]); // handleAddWatched là một eventHandler để xử lý việc thêm phim đã xem, nó sẽ thêm 1 phim mới vào mảng watched
-  const handleDeleteWatched = (id) => 
+  const handleDeleteWatched = (id) =>
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id)); // handleDeleteWatched là một eventHandler để xử lý việc xóa phim đã xem, nó sẽ xóa 1 phim đã xem khỏi mảng watched
   useEffect(() => {
     // Tạo một AbortController để cancel fetch request khi component unmount khỏi DOM hoặc khi query thay đổi (search thay đổi)
     // Mục đích của việc này là để tránh lỗi khi fetch request chưa hoàn thành mà component đã unmount khỏi DOM, gây ra lỗi
-    const controller = new AbortController(); 
+    const controller = new AbortController();
     // useEffect sẽ chạy sau khi render xong, nó sẽ mount vào DOM và chạy
     // Nếu không có dependency array thì useEffect sẽ chạy sau mỗi lần render, như vây sẽ gây ra vòng lặp vô hạn
     // Nó khác với eventHandler, eventHandler sẽ chạy khi có sự kiện xảy ra, còn useEffect sẽ chạy sau khi render xong
@@ -88,7 +88,7 @@ export default function App() {
         console.log(data.Search); // Sẽ trả về một mảng các phim, nhưng nếu console.log(movies) thì sẽ trả về mảng rỗng
         // vì setMovies là hàm bất đồng bộ nên nó chạy sau khi console.log
       } catch (err) {
-        if (err.name !== "AbortError"){
+        if (err.name !== "AbortError") {
           setError(err.message); // Nếu fetch data bị lỗi thì sẽ báo lỗi
         } // Nếu fetch data bị lỗi do cancel request thì sẽ không báo lỗi
       } finally {
@@ -132,7 +132,10 @@ export default function App() {
           ) : (
             <>
               <WatchedSummary watched={watched} />
-              <WatchedMoviesList watched={watched} deleteWatchedMovie={handleDeleteWatched} />
+              <WatchedMoviesList
+                watched={watched}
+                deleteWatchedMovie={handleDeleteWatched}
+              />
             </>
           )}
         </Box>
@@ -209,7 +212,12 @@ const WatchedMovies = ({ movie, deleteWatchedMovie }) => {
         </p>
       </div>
       {/* Delete button */}
-      <button className="btn-delete" onClick={() => deleteWatchedMovie(movie.imdbID)}>X</button>
+      <button
+        className="btn-delete"
+        onClick={() => deleteWatchedMovie(movie.imdbID)}
+      >
+        X
+      </button>
     </li>
   );
 };
@@ -305,7 +313,11 @@ const WatchedMoviesList = ({ watched, deleteWatchedMovie }) => {
   return (
     <ul className="list">
       {watched?.map((movie) => (
-        <WatchedMovies key={movie.imdbID} movie={movie} deleteWatchedMovie={deleteWatchedMovie}/>
+        <WatchedMovies
+          key={movie.imdbID}
+          movie={movie}
+          deleteWatchedMovie={deleteWatchedMovie}
+        />
       ))}
     </ul>
   );
@@ -317,7 +329,10 @@ const MovieDetails = ({ selectedId, closeMovie, addMovie, watched }) => {
   const [loading, setLoading] = useState(false); // loading là một state để xử lý việc loading khi fetch data, nếu data chưa được fetch thì sẽ hiện loading
   const [userRating, setUserRating] = useState(""); // userRating là một state để lưu trữ rating của người dùng
   const isWatched = watched.some((movie) => movie.imdbID === selectedId); // isWatched là một state để kiểm tra xem phim đã xem chưa
-  const userWatchedRate = watched.find((movie) => movie.imdbID === selectedId)?.userRating; // userWatchedRate lưu trữ rating của người dùng nếu phim đã xem
+  const userWatchedRate = watched.find(
+    (movie) => movie.imdbID === selectedId
+  )?.userRating; // userWatchedRate lưu trữ rating của người dùng nếu phim đã xem
+  // useEffect để fetch data từ api
   useEffect(() => {
     const loadDetailMovie = async () => {
       try {
@@ -348,6 +363,7 @@ const MovieDetails = ({ selectedId, closeMovie, addMovie, watched }) => {
     Director: director,
     Genre: genre,
   } = movie; // Destructuring object movie
+  // useEffect để đặt title cho trang web theo title của phim
   useEffect(() => {
     if (!title) return; // Nếu title không có thì return
     document.title = `Movie | ${title}`; // Đặt title cho trang web theo title của phim
@@ -356,8 +372,28 @@ const MovieDetails = ({ selectedId, closeMovie, addMovie, watched }) => {
       document.title = `React App`; // Đặt title cho trang web theo title mặc định
       console.log(`Clean up Movie ${title}`); //
     };
+  }, [title]);
 
-  }, [title])
+  // useEffect để bắt sự kiện nhấn phím esc để đóng thông tin phim
+  useEffect(
+    () => {
+      const handleEsc = (e) => {
+        if (e.key === "Escape") {
+          console.log("Close movie details by pressing ESC key");
+          closeMovie(); // Đóng thông tin phim
+        }
+      };
+      document.addEventListener("keydown", handleEsc); // Bắt sự kiện nhấn phím esc để đóng thông tin phim
+      // Cleanup function để xóa sự kiện nhấn phím esc khi component unmount khỏi DOM hoặc khi selectedId thay đổi
+      // vì mỗi lần selectedId thay đổi thì useEffect sẽ chạy lại, và nó sẽ mount lại số lần sự kiện nhấn phím esc tương ứng, nên cần cleanup
+      return () => {
+        document.removeEventListener("keydown", handleEsc); // Xóa sự kiện nhấn phím esc, handleEsc phai giống với handleEsc ở trên
+        console.log("Clean up handleEsc");
+      };
+    },
+    [closeMovie] // closeMovie là dependency, nếu closeMovie thay đổi thì useEffect sẽ chạy lại
+  );
+
   const onAddMovie = () => {
     const newMovie = {
       imdbID: selectedId,
@@ -408,7 +444,10 @@ const MovieDetails = ({ selectedId, closeMovie, addMovie, watched }) => {
             {/* Section chứa plot, actors, director */}
             <div className="rating">
               {isWatched ? (
-                <p>You rated with movie {userWatchedRate}<span>⭐️</span></p>
+                <p>
+                  You rated with movie {userWatchedRate}
+                  <span>⭐️</span>
+                </p>
               ) : (
                 <>
                   <StarRating // Component StarRating
