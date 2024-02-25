@@ -13,4 +13,8 @@
       VD `useEffect(() => {console.log('Hello'), [count, title])` - chỉ gọi khi count hoặc title thay đổi.
     * Nếu không có mảng dependency, hàm callback sẽ được gọi vô tận sau khi render.
       VD `useEffect(() => {console.log('Hello')})`
-    
+- `useEffect` có thể trả về một hàm cleanup, hàm này sẽ dọn dẹp các side effect khi component bị unmount hoặc khi mảng dependency thay đổi.
+  + Ví dụ khi gọi API, chúng ta cần hủy bỏ các request khi component bị unmount.
+  + Ví dụ khi thay đổi state, chúng ta cần hủy bỏ các side effect cũ.
+  + Ví dụ khi nhấn vào 1 thông tin, làm thay đổi title của trang, chúng ta cần reset lại title khi component bị unmount (tránh trường hợp title bị thay đổi khi chuyển qua trang khác).
+  + VD: `useEffect(() => {console.log('Hello'); return () => console.log('Goodbye')})` - sẽ log ra "Hello" sau mỗi lần render và log ra "Goodbye" khi component bị unmount hoặc khi mảng dependency thay đổi, hàm `return () => console.log('Goodbye')` chính là hàm cleanup.

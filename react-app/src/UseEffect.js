@@ -68,6 +68,9 @@ export default function App() {
   const handleDeleteWatched = (id) => 
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id)); // handleDeleteWatched là một eventHandler để xử lý việc xóa phim đã xem, nó sẽ xóa 1 phim đã xem khỏi mảng watched
   useEffect(() => {
+    // Tạo một AbortController để cancel fetch request khi component unmount khỏi DOM hoặc khi query thay đổi (search thay đổi)
+    // Mục đích của việc này là để tránh lỗi khi fetch request chưa hoàn thành mà component đã unmount khỏi DOM, gây ra lỗi
+    const controller = new AbortController(); 
     // useEffect sẽ chạy sau khi render xong, nó sẽ mount vào DOM và chạy
     // Nếu không có dependency array thì useEffect sẽ chạy sau mỗi lần render, như vây sẽ gây ra vòng lặp vô hạn
     // Nó khác với eventHandler, eventHandler sẽ chạy khi có sự kiện xảy ra, còn useEffect sẽ chạy sau khi render xong
@@ -76,7 +79,8 @@ export default function App() {
         setLoading(true); // Nếu data chưa được fetch thì sẽ hiện loading
         setError(""); // fetch được data thì sẽ không có lỗi
         const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`, // Fetch data từ api
+          { signal: controller.signal } // signal để cancel fetch request khi component unmount khỏi DOM hoặc khi query thay đổi (search thay đổi)
         );
         if (!res.ok) throw new Error("Something went wrong"); // Nếu fetch data bị lỗi thì sẽ throw error (mất mạng, api không hoạt động, ...)
         const data = await res.json();
@@ -84,7 +88,9 @@ export default function App() {
         console.log(data.Search); // Sẽ trả về một mảng các phim, nhưng nếu console.log(movies) thì sẽ trả về mảng rỗng
         // vì setMovies là hàm bất đồng bộ nên nó chạy sau khi console.log
       } catch (err) {
-        setError(err.message); // Nếu fetch data bị lỗi thì sẽ báo lỗi
+        if (err.name !== "AbortError"){
+          setError(err.message); // Nếu fetch data bị lỗi thì sẽ báo lỗi
+        } // Nếu fetch data bị lỗi do cancel request thì sẽ không báo lỗi
       } finally {
         setLoading(false); // Nếu fetch data thành công, hoặc không thì sẽ tắt loading
       }
@@ -93,6 +99,9 @@ export default function App() {
       }
     };
     loadMovies(); // Nên tạo hàm bất đồng bộ trong useEffect để tránh lỗi
+    return () => {
+      controller.abort(); // Cleanup function để cancel fetch request khi component unmount khỏi DOM hoặc khi query thay đổi (search thay đổi)
+    };
   }, [query]); // [] là dependency array, nếu có thay đổi thì useEffect sẽ chạy lại
 
   return (
@@ -342,6 +351,12 @@ const MovieDetails = ({ selectedId, closeMovie, addMovie, watched }) => {
   useEffect(() => {
     if (!title) return; // Nếu title không có thì return
     document.title = `Movie | ${title}`; // Đặt title cho trang web theo title của phim
+    // Cleanup function để xóa title của phim khi component unmount khỏi DOM hoặc khi title thay đổi
+    return () => {
+      document.title = `React App`; // Đặt title cho trang web theo title mặc định
+      console.log(`Clean up Movie ${title}`); //
+    };
+
   }, [title])
   const onAddMovie = () => {
     const newMovie = {
