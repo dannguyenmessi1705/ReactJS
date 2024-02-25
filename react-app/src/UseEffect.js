@@ -339,6 +339,10 @@ const MovieDetails = ({ selectedId, closeMovie, addMovie, watched }) => {
     Director: director,
     Genre: genre,
   } = movie; // Destructuring object movie
+  useEffect(() => {
+    if (!title) return; // Nếu title không có thì return
+    document.title = `Movie | ${title}`; // Đặt title cho trang web theo title của phim
+  }, [title])
   const onAddMovie = () => {
     const newMovie = {
       imdbID: selectedId,
