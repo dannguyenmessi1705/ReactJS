@@ -44,3 +44,13 @@
     + `countRef` sẽ tăng giá trị lên 1 mỗi khi giá trị của `count` thay đổi.
     + Không thể sử dụng let hoặc const để đếm số lần render vì giá trị của let và const sẽ bị reset về 0 mỗi khi component re-render.
     + Nếu sử dụng useState thì mỗi lần update sẽ gây ra re-render, còn useRef thì không gây ra re-render.
+
+### 3.3. custom hooks
+- custom hooks là 1 hàm JavaScript bắt đầu bằng từ `use` và có thể gọi các React Hooks khác.
+- custom hooks giúp chúng ta tái sử dụng logic giữa các component function.
+- custom hooks giống như 1 component function, nhưng nó không trả về JSX, mà trả về các giá trị, các hàm, hoặc các React Hooks khác.
+- custom hooks giống như 1 hàm JavaScript bình thường, nhưng nó có thể gọi các React Hooks khác vì bình thường trong hàm JavaScript không thể gọi các React Hooks.
+- VD: `function useCustomHook() { const [state, setState] = useState(0); return [state, setState]; }`
+    + `useCustomHook` là 1 custom hook.
+    + `useCustomHook` trả về 1 state và 1 hàm để cập nhật state.
+    + `useCustomHook` có thể gọi các React Hooks khác như useState, useEffect, useRef, ... bên trong nó.
