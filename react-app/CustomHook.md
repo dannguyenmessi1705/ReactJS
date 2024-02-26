@@ -27,3 +27,20 @@
     + Cách 1: `setState(newValue);` (cập nhật state bằng 1 giá trị cố định).
     + Cách 2: `setState((prevState) => {});` (cập nhật state bằng 1 callback khi giá trị cập nhật là 1 logic phức tạp, bất đồng bộ, hoặc phụ thuộc vào giá trị trước đó).
 - Lưu ý: Khi cập nhật state với state là 1 object hoặc 1 array, chúng ta cần phải sử dụng 1 callback để cập nhật state (ví dụ: `setState((prevState) => { return {...prevState, key: value} })`). Tuyệt đối không được cập nhật state trực tiếp (ví dụ: `setState({...state, key: value}`) vì ban đầu nó được khởi tạo là 1 hằng số và không thể thay đổi cấu trúc của nó, thay vào đó chúng ta cần phải tạo 1 bản sao của state và cập nhật bản sao đó.
+
+### 3.2. useRef
+- useRef có thể được sử dụng để tham chiếu đến 1 DOM element hoặc 1 giá trị cố định.
+- Hàm useRef trả về 1 object có 1 thuộc tính là current, giá trị của current sẽ thay đổi mỗi khi giá trị của ref thay đổi. `ref` sẽ giữ nguyên giá trị của nó giữa các lần render.
+- useRef là một hàm đồng bộ, nghĩa là nó không gây ra re-render khi giá trị của nó thay đổi.
+- Tạo và truy cập ref từ component function.
+    + Cách đơn giản: `const ref = useRef(initialValue);` (khởi tạo giá trị mặc định cho ref bằng 1 giá trị cố định).
+    + Cách phức tạp: `const ref = useRef(() => {});` (khởi tạo giá trị mặc định cho ref bằng 1 callback khi giá trị khởi tạo là 1 logic phức tạp, hoặc bất đồng bộ).
+- useRef khác với useState ở chỗ là useRef không gây ra re-render khi giá trị của nó thay đổi, còn useState sẽ gây ra re-render khi giá trị của nó thay đổi.
+- Lưu ý: Khi sử dụng ref để tham chiếu đến 1 DOM element, chúng ta cần phải sử dụng ref.current để truy cập đến DOM element đó (ví dụ: `ref.current.focus()`).
+- VD: `const inputRef = useRef(null); <input ref={inputRef} />; inputRef.current.focus();`
+    + `inputRef` sẽ được gán vào thuộc tính `ref` của DOM element, và `ref.current` sẽ trỏ đến DOM element đó.
+    + `inputRef.current` sẽ là <input> element.
+-VD: `const countRef = useRef(0); useEffect(() => { countRef.current++; }, [count]);`
+    + `countRef` sẽ tăng giá trị lên 1 mỗi khi giá trị của `count` thay đổi.
+    + Không thể sử dụng let hoặc const để đếm số lần render vì giá trị của let và const sẽ bị reset về 0 mỗi khi component re-render.
+    + Nếu sử dụng useState thì mỗi lần update sẽ gây ra re-render, còn useRef thì không gây ra re-render.

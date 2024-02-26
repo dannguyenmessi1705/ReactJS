@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 
 const tempMovieData = [
@@ -62,7 +62,7 @@ export default function App() {
   // watched là một state để lưu trữ danh sách phim đã xem, nó sẽ lưu vào localStorage, nên sẽ khởi tạo từ localStorage
   const [watched, setWatched] = useState(() => {
     const movies = localStorage.getItem("watched");
-    return movies ? JSON.parse(movies): [];
+    return movies ? JSON.parse(movies) : [];
   }); // Nên truyền callback function vào useState để lấy dữ liệu từ localStorage, khồng truyền trực tiếp localStorage.getItem("watched") vào useState vì nó sẽ chạy mỗi lần render như vậy sẽ gây ra vòng lặp vô hạn
   const handleSelectMovie = (id) =>
     setSelectedId((selectedId) => (selectedId === id ? null : id)); // handleSelectMovie là một eventHandler để xử lý việc hiện thông tin phim đã xem
@@ -110,7 +110,7 @@ export default function App() {
 
   // Lưu watched vào localStorage, nên sử dụng useEffect để lưu watched vào localStorage khi watched thay đổi
   useEffect(() => {
-    localStorage.setItem("watched", JSON.stringify(watched))
+    localStorage.setItem("watched", JSON.stringify(watched));
   }, [watched]);
 
   return (
@@ -277,6 +277,24 @@ const ErrorMessage = ({ message }) => {
 
 // Component Search để tìm kiếm phim
 const Search = ({ query, setQuery }) => {
+  // Sử dụng useRef để lưu DOM element, nó sẽ không gây ra re-render khi state thay đổi => tăng hiệu suất
+  const inputRef = useRef(null); // Khởi tạo useRef với giá trị ban đầu là null
+  // useEffect để focus vào input khi component render xong
+  useEffect(() => {
+    const handleEnter = (e) => {
+      if (document.activeElement === inputRef.current) return; // Nếu input đang focus thì sẽ không chạy tiếp
+      if (e.key === "Enter") {
+        // Nếu nhấn phím Enter thì sẽ focus vào input
+        inputRef.current.focus(); // Focus vào input
+        setQuery(""); // Set query thành rỗng để clear input sau khi nhấn Enter để search
+      }
+    };
+    document.addEventListener("keydown", handleEnter); // Bắt sự kiện nhấn phím Enter để focus vào input
+    return () => {
+      document.addEventListener("keydown", handleEnter); // Cleanup function để xóa sự kiện nhấn phím Enter khi component unmount khỏi DOM hoặc khi query thay đổi
+    };
+  }, [query]); // query là dependency, nếu query thay đổi thì useEffect sẽ chạy lại
+
   return (
     <input
       className="search"
@@ -284,6 +302,7 @@ const Search = ({ query, setQuery }) => {
       placeholder="Search movies..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
+      ref={inputRef} // Gán inputRef vào ref của input
     />
   );
 };
@@ -337,6 +356,14 @@ const MovieDetails = ({ selectedId, closeMovie, addMovie, watched }) => {
   const [movie, setMovie] = useState({}); // movie là một state để lưu trữ thông tin phim đã xem
   const [loading, setLoading] = useState(false); // loading là một state để xử lý việc loading khi fetch data, nếu data chưa được fetch thì sẽ hiện loading
   const [userRating, setUserRating] = useState(""); // userRating là một state để lưu trữ rating của người dùng
+
+  // Sử dụng useRef để đếm số lần người dùng đánh giá phim trước khi thêm phim đã xem
+  const countRef = useRef(0); // Khởi tạo useRef với giá trị ban đầu là 0
+  // useEffect thay đổi theo userRating, nếu userRating thay đổi thì useEffect sẽ chạy lại, để đếm số lần người dùng đánh giá phim trước khi thêm phim đã xem
+  useEffect(() => {
+    if (userRating) countRef.current++;
+  }, [userRating]); // userRating là dependency, nếu userRating thay đổi thì useEffect sẽ chạy lại
+
   const isWatched = watched.some((movie) => movie.imdbID === selectedId); // isWatched là một state để kiểm tra xem phim đã xem chưa
   const userWatchedRate = watched.find(
     (movie) => movie.imdbID === selectedId
@@ -412,6 +439,7 @@ const MovieDetails = ({ selectedId, closeMovie, addMovie, watched }) => {
       runtime: Number(runtime.split(" ")[0]), // runtime: 148 min => runtime: 148
       imdbRating: Number(imdbRating), // imdbRating là state để lưu trữ rating của imdb
       userRating: Number(userRating), // userRating là state để lưu trữ rating của người dùng
+      countRateByUser: countRef.current, // countRateByUser là state để lưu trữ số lần người dùng đánh giá phim trước khi thêm phim đã xem
     };
     addMovie(newMovie); // Thêm phim đã xem vào mảng watched
     closeMovie(); // Đóng thông tin phim sau khi thêm phim đã xem
