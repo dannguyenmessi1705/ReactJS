@@ -39,7 +39,7 @@
 - Lưu ý: Khi sử dụng ref để tham chiếu đến 1 DOM element, chúng ta cần phải sử dụng ref.current để truy cập đến DOM element đó (ví dụ: `ref.current.focus()`).
 - VD: `const inputRef = useRef(null); <input ref={inputRef} />; inputRef.current.focus();`
     + `inputRef` sẽ được gán vào thuộc tính `ref` của DOM element, và `ref.current` sẽ trỏ đến DOM element đó.
-    + `inputRef.current` sẽ là <input> element.
+    + `inputRef.current` sẽ là `<input>` element.
 -VD: `const countRef = useRef(0); useEffect(() => { countRef.current++; }, [count]);`
     + `countRef` sẽ tăng giá trị lên 1 mỗi khi giá trị của `count` thay đổi.
     + Không thể sử dụng let hoặc const để đếm số lần render vì giá trị của let và const sẽ bị reset về 0 mỗi khi component re-render.
