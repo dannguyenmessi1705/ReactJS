@@ -7,6 +7,8 @@ import UseEffect from "./01.UseEffect/UseEffect";
 import ConvertCurrency from "./01.UseEffect/ConvertCurrency";
 import "./01.UseEffect/ConverCurrency.css";
 import CustomHook from "./02.CustomHook/CustomHook";
+import "./03.BasicClasses/ClassyWeather.css";
+import ClassyWeather from "./03.BasicClasses/ClassyWeather";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -15,5 +17,6 @@ root.render(
   //  {/* <PropsState /> */} {/* Props và State */}
   // <UseEffect /> // {/* useEffect */}
   // <ConvertCurrency />  // {/* useEffect */}
-  <CustomHook /> // {/* Custom Hook */}
+  // <CustomHook /> // {/* Custom Hook */}
+  <ClassyWeather /> // {/* Class Component (Basic Classes) */}
 );
