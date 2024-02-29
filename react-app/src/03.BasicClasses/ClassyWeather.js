@@ -28,11 +28,13 @@ function convertToFlag(countryCode) {
 
 function formatDay(dateStr) {
   return new Intl.DateTimeFormat("en", {
-    weekday: "short", 
-  }).format(new Date(dateStr)); 
+    weekday: "short",
+  }).format(new Date(dateStr));
 } // Hàm trả về ngày trong tuần tương ứng với ngày tháng năm
 
 class ClassyWeather extends React.Component {
+  // Có thể không cần constructo mà khai báo state trực tiếp `state = {}`
+  // Tương tự nếu không cần bind method thì có thể viết method dưới dạng arrow function `fetchWeather = async () => {}` vì arrow function không tạo ra context riêng
   constructor(props) {
     super(props); // Gọi hàm khởi tạo của lớp cha (React.Component) với tham số props
     this.state = {
@@ -45,7 +47,7 @@ class ClassyWeather extends React.Component {
   }
   async fetchWeather() {
     try {
-        this.setState({ isLoading: true }); // Cập nhật giá trị cho state isLoading, không cần phải spread cả object vì trong class không khai báo state là 1 constant
+      this.setState({ isLoading: true }); // Cập nhật giá trị cho state isLoading, không cần phải spread cả object vì trong class không khai báo state là 1 constant
       // 1) Lấy thông tin địa lý
       const geoRes = await fetch(
         `https://geocoding-api.open-meteo.com/v1/search?name=${this.state.location}`
@@ -57,34 +59,102 @@ class ClassyWeather extends React.Component {
 
       const { latitude, longitude, timezone, name, country_code } =
         geoData.results.at(0); // Lấy thông tin địa lý từ kết quả trả về (lấy kết quả đầu tiên)
-      this.setState({displayLocation: `${name} ${convertToFlag(country_code)}`}); // Cập nhật giá trị cho state displayLocation, không cần phải spread cả object vì trong class không khai báo state là 1 constant
+      this.setState({
+        displayLocation: `${name} ${convertToFlag(country_code)}`,
+      }); // Cập nhật giá trị cho state displayLocation, không cần phải spread cả object vì trong class không khai báo state là 1 constant
 
       // 2) Lấy thông tin thời tiết
       const weatherRes = await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&timezone=${timezone}&daily=weathercode,temperature_2m_max,temperature_2m_min`
       );
       const weatherData = await weatherRes.json();
-      this.setState({weatherData: weatherData.daily}); // Cập nhật giá trị cho state weatherData, không cần phải spread cả object vì trong class không khai báo state là 1 constant
+      this.setState({ weatherData: weatherData.daily }); // Cập nhật giá trị cho state weatherData, không cần phải spread cả object vì trong class không khai báo state là 1 constant
     } catch (err) {
       console.log(err);
     } finally {
-        this.setState({ isLoading: false }); // Cập nhật giá trị cho state isLoading, không cần phải spread cả object vì trong class không khai báo state là 1 constant
+      this.setState({ isLoading: false }); // Cập nhật giá trị cho state isLoading, không cần phải spread cả object vì trong class không khai báo state là 1 constant
     }
   }
+
+  // Không cần bind thì dùng arrow function
+  setLocation = (e) => this.setState({ location: e.target.value });
+
   render() {
     return (
       <div className="app">
         <h1>Classy Weather</h1>
-        <div>
-          <input
-            type="text"
-            placeholder="Search location..."
-            value={this.state.location}
-            onChange={(e) => this.setState({ location: e.target.value })}
-          />
-        </div>
+        <Input location={this.state.location} setLocation={this.setLocation} />
         <button onClick={this.fetchWeather}>Watch Weather</button>
+        <div>
+          {this.state.isLoading && <p className="loader">Loading...</p>}
+          {this.state.weatherData.weathercode && (
+            <Weather
+              weather={this.state.weatherData}
+              location={this.state.displayLocation}
+            /> // Truyền props cho Weather Component
+          )}
+        </div>
       </div>
+    );
+  }
+}
+
+class Input extends React.Component {
+  render() {
+    return (
+      <div>
+        <input
+          type="text"
+          placeholder="Search location..."
+          value={this.props.location} // Lấy giá trị location từ props của class Classy Weather
+          onChange={this.props.setLocation} // Lấy function được truyền vào props từ Classy Weather
+        />
+      </div>
+    );
+  }
+}
+
+class Weather extends React.Component {
+  render() {
+    const {
+      temperature_2m_max: max,
+      temperature_2m_min: min,
+      time,
+      weathercode,
+    } = this.props.weather;
+    const location = this.props.location;
+    return (
+      <div>
+        <h2>Weather {location}</h2>
+        <ul className="weather">
+          {time.map((day, i) => {
+            return (
+              <Day
+                key={i}
+                day={formatDay(day)}
+                max={max[i]}
+                min={min[i]}
+                weatherCode={weathercode[i]}
+              />
+            );
+          })}
+        </ul>
+      </div>
+    );
+  }
+}
+
+class Day extends React.Component {
+  render() {
+    const { day, max, min, weatherCode } = this.props;
+    return (
+      <li className="day">
+        <span>{getWeatherIcon(weatherCode)}</span>
+        <p>{day}</p>
+        <p className="important">
+          {Math.floor(min)}&deg; &mdash; <strong>{Math.ceil(max)}&deg;</strong>
+        </p>
+      </li>
     );
   }
 }
