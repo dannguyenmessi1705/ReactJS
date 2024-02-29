@@ -46,6 +46,10 @@ class ClassyWeather extends React.Component {
     this.fetchWeather = this.fetchWeather.bind(this); // Bind với this để sử dụng this chính là Class Component này
   }
   async fetchWeather() {
+    if (this.state.location.length < 2) { // Nếu độ dài của location nhỏ hơn 2
+      this.setState({ weatherData: {} }); // Cập nhật giá trị cho state weatherData để unmount component Weather
+      return; // Kết thúc hàm fetchWeather
+    }
     try {
       this.setState({ isLoading: true }); // Cập nhật giá trị cho state isLoading, không cần phải spread cả object vì trong class không khai báo state là 1 constant
       // 1) Lấy thông tin địa lý
@@ -79,12 +83,22 @@ class ClassyWeather extends React.Component {
   // Không cần bind thì dùng arrow function
   setLocation = (e) => this.setState({ location: e.target.value });
 
+  componentDidMount() {
+    this.setState({location: localStorage.getItem("location") || ""}) // Lấy giá trị location từ localStorage nếu có hoặc để giá trị rỗng
+  } // Lifecycle method được gọi sau khi component được render lần đầu tiên
+
+  componentDidUpdate(prevProps, prevState){
+    if(prevState.location !== this.state.location){ // Nếu giá trị location thay đổi
+      this.fetchWeather(); // Gọi hàm fetchWeather
+      localStorage.setItem("location", this.state.location) // Lưu giá trị location vào localStorage
+    }
+  } // Lifecycle method được gọi sau khi component được cập nhật (props hoặc state) và trước khi render lại
+
   render() {
     return (
       <div className="app">
         <h1>Classy Weather</h1>
         <Input location={this.state.location} setLocation={this.setLocation} />
-        <button onClick={this.fetchWeather}>Watch Weather</button>
         <div>
           {this.state.isLoading && <p className="loader">Loading...</p>}
           {this.state.weatherData.weathercode && (
@@ -115,6 +129,9 @@ class Input extends React.Component {
 }
 
 class Weather extends React.Component {
+  componentWillUnmount(){
+    alert("Weather component will be unmounted");
+  } // Lifecycle method được gọi trước khi component bị unmount
   render() {
     const {
       temperature_2m_max: max,
