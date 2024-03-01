@@ -1,34 +1,61 @@
-import { useState } from "react";
+import { useReducer } from "react";
+
+const getDate = () => {
+    const date = new Date();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return new Date(`${month} ${day} ${year}`)
+}
+
+const initialState = {count: 0, step: 1}; // Khởi tạo giá trị ban đầu cho state
+
+const reducer = (state, action) => {
+    console.log(state, action);
+    switch (action.type) {
+        case "inc":
+            return {...state, count: state.count + state.step}; // Trả về state mới dựa trên state cũ và cập nhật count tăng thêm step lần
+        case "dec":
+            return {...state, count: state.count - state.step}; // Trả về state mới dựa trên state cũ và cập nhật count giảm đi step lần
+        case "setCount": 
+            return {...state, count: action.payload}; // Trả về state mới dựa trên state cũ và cập nhật count bằng payload
+        case "setStep":
+            return {...state, step: action.payload}; // Trả về state mới dựa trên state cũ và cập nhật step bằng payload
+        case "reset":
+            return initialState; // Trả về state mới là giá trị ban đầu
+        default:
+            throw new Error("Unknown action type");
+    }
+} // Hàm reducer nhận vào 2 tham số là state và action, trả về state mới
 
 function DateCounter() {
-  const [count, setCount] = useState(0);
-  const [step, setStep] = useState(1);
+    // useReducer
+    const [state, dispatch] = useReducer(reducer, initialState); // useReducer nhận vào 2 tham số là hàm reducer và giá trị ban đầu của state, trả về state mới và hàm dispatch
+    const {count, step} = state; // Destructuring lấy ra count và step từ state
+    console.log(count, step)
 
   // This mutates the date object.
-  const date = new Date("june 21 2027");
+  const date = getDate();
   date.setDate(date.getDate() + count);
 
   const dec = function () {
-    // setCount((count) => count - 1);
-    setCount((count) => count - step);
+    dispatch({type: "dec"}); // Gửi action dec
   };
 
   const inc = function () {
-    // setCount((count) => count + 1);
-    setCount((count) => count + step);
+    dispatch({type: "inc"}); // Gửi action inc
   };
 
   const defineCount = function (e) {
-    setCount(Number(e.target.value));
+    dispatch({type: "setCount", payload: Number(e.target.value)}); // Gửi action setCount với payload là giá trị của input number
   };
 
   const defineStep = function (e) {
-    setStep(Number(e.target.value));
+    dispatch({type: "setStep", payload: Number(e.target.value)}) // Gửi action setStep với payload là giá trị của input range
   };
 
   const reset = function () {
-    setCount(0);
-    setStep(1);
+    dispatch({type: "reset"}) // Gửi action reset
   };
 
   return (
