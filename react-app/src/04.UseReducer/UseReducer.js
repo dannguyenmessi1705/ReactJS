@@ -5,6 +5,7 @@ import Main from "./Main";
 import Loader from "./Loader";
 import Error from "./Error";
 import StartScreen from "./StartScreen";
+import Question from "./Question";
 
 const initState = {
   questions: [],
@@ -17,6 +18,8 @@ const reducer = (state, action) => {
       return { ...state, questions: action.payload, status: "ready" }; // Trả về state mới
     case "dataFailed": // Nếu action.type là "dataFailed"
       return { ...state, status: "error" }; // Trả về state mới
+    case "active": 
+      return {...state, status: "active"};
     default:
       throw new Error("Unkwown action"); // Nếu action.type không khớp với bất kỳ case nào thì throw error
   }
@@ -44,7 +47,9 @@ const App = () => {
       <Main>
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
-        {status === "ready" && <StartScreen numQuestions={questions.length}/>}
+        {/* Truyền numQuestions và dispatch vào StartScreen */}
+        {status === "ready" && <StartScreen numQuestions={questions.length} dispatch={dispatch}/>} 
+        {status === "active" && <Question />} 
       </Main>
     </div>
   );
