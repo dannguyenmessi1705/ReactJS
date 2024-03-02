@@ -10,7 +10,9 @@ import Question from "./Question";
 const initState = {
   questions: [],
   status: "loading", // status gán là "loading", "ready", "error", "active" tùy thuộc vào trạng thái của ứng dụng
-  index: 0 // index để lưu vị trí của câu hỏi hiện tại
+  index: 0, // index để lưu vị trí của câu hỏi hiện tại
+  answer: null, // answer để lưu câu trả lời của người dùng
+  score: 0, // score để lưu điểm của người dùng
 }; // Đây là state khởi tạo
 
 const reducer = (state, action) => {
@@ -19,8 +21,18 @@ const reducer = (state, action) => {
       return { ...state, questions: action.payload, status: "ready" }; // Trả về state mới
     case "dataFailed": // Nếu action.type là "dataFailed"
       return { ...state, status: "error" }; // Trả về state mới
-    case "active": 
-      return {...state, status: "active"};
+    case "active":
+      return { ...state, status: "active" };
+    case "newAnswer":
+      const question = state.questions[state.index]; // Lấy ra câu hỏi hiện tại từ state
+      return {
+        ...state,
+        answer: action.payload, // Gán answer bằng payload
+        score:
+          question.correctOption === action.payload // Kiểm tra xem câu trả lời có đúng không, phải lấy từ payload chứ không phải từ state vì state chưa cập nhật
+            ? state.score + question.points
+            : state.score, // Nếu câu trả lời đúng thì cộng thêm điểm, sai thì không cộng
+      }; // Trả về state mới với answer mới
     default:
       throw new Error("Unkwown action"); // Nếu action.type không khớp với bất kỳ case nào thì throw error
   }
@@ -28,7 +40,7 @@ const reducer = (state, action) => {
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initState); // Khai báo state và dispatch từ useReducer, reducer và initState
-  const { questions, status, index } = state; // Destructuring state thành questions và status
+  const { questions, status, index, answer, score } = state; // Destructuring state thành questions và status
   useEffect(() => {
     const loadQuestion = async () => {
       try {
@@ -49,8 +61,17 @@ const App = () => {
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
         {/* Truyền numQuestions và dispatch vào StartScreen */}
-        {status === "ready" && <StartScreen numQuestions={questions.length} dispatch={dispatch}/>} 
-        {status === "active" && <Question question={questions[index]} key={questions[index].id}/>} 
+        {status === "ready" && (
+          <StartScreen numQuestions={questions.length} dispatch={dispatch} />
+        )}
+        {status === "active" && (
+          <Question
+            question={questions[index]}
+            key={questions[index].id}
+            dispatch={dispatch}
+            answer={answer}
+          />
+        )}
       </Main>
     </div>
   );
