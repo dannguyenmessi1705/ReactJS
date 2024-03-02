@@ -10,6 +10,7 @@ import Question from "./Question";
 const initState = {
   questions: [],
   status: "loading", // status gán là "loading", "ready", "error", "active" tùy thuộc vào trạng thái của ứng dụng
+  index: 0 // index để lưu vị trí của câu hỏi hiện tại
 }; // Đây là state khởi tạo
 
 const reducer = (state, action) => {
@@ -27,7 +28,7 @@ const reducer = (state, action) => {
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initState); // Khai báo state và dispatch từ useReducer, reducer và initState
-  const { questions, status } = state; // Destructuring state thành questions và status
+  const { questions, status, index } = state; // Destructuring state thành questions và status
   useEffect(() => {
     const loadQuestion = async () => {
       try {
@@ -49,7 +50,7 @@ const App = () => {
         {status === "error" && <Error />}
         {/* Truyền numQuestions và dispatch vào StartScreen */}
         {status === "ready" && <StartScreen numQuestions={questions.length} dispatch={dispatch}/>} 
-        {status === "active" && <Question />} 
+        {status === "active" && <Question question={questions[index]} key={questions[index].id}/>} 
       </Main>
     </div>
   );

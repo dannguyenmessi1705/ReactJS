@@ -1,9 +1,11 @@
-const Question = () => {
+import Options from "./Options"
+
+const Question = ({question}) => {
     return (
         <div>
-            <h1>Question</h1>
+            <h4>{question.question}</h4>
+            <Options options={question.options}/>
         </div>
     )
 }
-
 export default Question
