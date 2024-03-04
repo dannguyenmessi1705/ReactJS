@@ -9,6 +9,10 @@ import Question from "./Question";
 import NextButton from "./NextButton";
 import Progress from "./Progess";
 import FinishScreen from "./FinishScreen";
+import Footer from "./Footer";
+import Timer from "./Timer";
+
+const SECS_PER_QUESTION = 30;
 
 const initState = {
   questions: [],
@@ -17,6 +21,7 @@ const initState = {
   answer: null, // answer để lưu câu trả lời của người dùng
   score: 0, // score để lưu điểm của người dùng
   highscore: 0, // highscore để lưu điểm cao nhất
+  secondRemaining: 0, // secondRemaining để lưu số giây còn lại
 }; // Đây là state khởi tạo
 
 const reducer = (state, action) => {
@@ -26,7 +31,11 @@ const reducer = (state, action) => {
     case "dataFailed": // Nếu action.type là "dataFailed"
       return { ...state, status: "error" }; // Trả về state mới
     case "active":
-      return { ...state, status: "active" };
+      return {
+        ...state,
+        status: "active",
+        secondRemaining: SECS_PER_QUESTION * state.questions.length,
+      }; // Trả về state mới với status là "active" và secondRemaining bằng SECS_PER_QUESTION
     case "newAnswer":
       const question = state.questions[state.index]; // Lấy ra câu hỏi hiện tại từ state
       return {
@@ -43,6 +52,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         status: "finished",
+        secondRemaining: 0,
         highscore:
           state.score > state.highscore ? state.score : state.highscore,
       }; // Trả về state mới với status là "finished" và cập nhật highscore nếu điểm mới lớn hơn điểm cao nhất
@@ -53,7 +63,14 @@ const reducer = (state, action) => {
         index: 0,
         answer: null,
         score: 0,
+        secondRemaining: SECS_PER_QUESTION * state.questions.length,
       }; // Trả về state mới với status là "ready" và reset lại index, answer, score
+    case "tick":
+      return {
+        ...state,
+        secondRemaining: state.secondRemaining - 1,
+        status: state.secondRemaining === 0 ? "finished" : state.status,
+      }; // Trả về state mới với secondRemaining giảm đi 1 và status là "finished" nếu secondRemaining bằng 0
     default:
       throw new Error("Unkwown action"); // Nếu action.type không khớp với bất kỳ case nào thì throw error
   }
@@ -61,7 +78,15 @@ const reducer = (state, action) => {
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initState); // Khai báo state và dispatch từ useReducer, reducer và initState
-  const { questions, status, index, answer, score, highscore } = state; // Destructuring state thành questions và status
+  const {
+    questions,
+    status,
+    index,
+    answer,
+    score,
+    highscore,
+    secondRemaining,
+  } = state; // Destructuring state thành questions và status
   const maxScores = questions.reduce(
     (acc, question) => acc + question.points,
     0
@@ -104,12 +129,15 @@ const App = () => {
               dispatch={dispatch}
               answer={answer}
             />
-            <NextButton
-              dispatch={dispatch}
-              answer={answer}
-              numQuestion={questions.length}
-              index={index}
-            />
+            <Footer>
+              <Timer dispatch={dispatch} secondRemaining={secondRemaining} />
+              <NextButton
+                dispatch={dispatch}
+                answer={answer}
+                numQuestion={questions.length}
+                index={index}
+              />
+            </Footer>
           </>
         )}
         {status === "finished" && (
