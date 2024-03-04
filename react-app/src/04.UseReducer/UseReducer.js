@@ -46,6 +46,14 @@ const reducer = (state, action) => {
         highscore:
           state.score > state.highscore ? state.score : state.highscore,
       }; // Trả về state mới với status là "finished" và cập nhật highscore nếu điểm mới lớn hơn điểm cao nhất
+    case "restart":
+      return {
+        ...state,
+        status: "active",
+        index: 0,
+        answer: null,
+        score: 0,
+      }; // Trả về state mới với status là "ready" và reset lại index, answer, score
     default:
       throw new Error("Unkwown action"); // Nếu action.type không khớp với bất kỳ case nào thì throw error
   }
@@ -109,6 +117,7 @@ const App = () => {
             score={score}
             maxScore={maxScores}
             highScore={highscore}
+            dispatch={dispatch}
           />
         )}
       </Main>
