@@ -7,6 +7,7 @@ import Error from "./Error";
 import StartScreen from "./StartScreen";
 import Question from "./Question";
 import NextButton from "./NextButton";
+import Progress from "./Progess";
 
 const initState = {
   questions: [],
@@ -44,6 +45,7 @@ const reducer = (state, action) => {
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initState); // Khai báo state và dispatch từ useReducer, reducer và initState
   const { questions, status, index, answer, score } = state; // Destructuring state thành questions và status
+  const maxScores = questions.reduce((acc, question) => acc + question.points, 0); // Tính tổng điểm của tất cả câu hỏi
   useEffect(() => {
     const loadQuestion = async () => {
       try {
@@ -69,6 +71,7 @@ const App = () => {
         )}
         {status === "active" && (
           <>
+            <Progress numQuestion={questions.length} scores={score} answer={answer} index={index} maxPoint={maxScores}/>
             <Question
               question={questions[index]}
               key={questions[index].id}
