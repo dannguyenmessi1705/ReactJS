@@ -78,7 +78,7 @@ const App = () => {
               dispatch={dispatch}
               answer={answer}
             />
-            <NextButton dispatch={dispatch} answer={answer} />
+            <NextButton dispatch={dispatch} answer={answer} numQuestion={questions.length} index={index}/>
           </>
         )}
       </Main>
