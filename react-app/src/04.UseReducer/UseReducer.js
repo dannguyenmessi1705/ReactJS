@@ -6,6 +6,7 @@ import Loader from "./Loader";
 import Error from "./Error";
 import StartScreen from "./StartScreen";
 import Question from "./Question";
+import NextButton from "./NextButton";
 
 const initState = {
   questions: [],
@@ -33,6 +34,8 @@ const reducer = (state, action) => {
             ? state.score + question.points
             : state.score, // Nếu câu trả lời đúng thì cộng thêm điểm, sai thì không cộng
       }; // Trả về state mới với answer mới
+    case "nextQuestion":
+      return {...state, index: state.index + 1, answer: null}; // Trả về state mới với index tăng lên 1 và answer bằng null để reset lại câu trả lời
     default:
       throw new Error("Unkwown action"); // Nếu action.type không khớp với bất kỳ case nào thì throw error
   }
@@ -65,12 +68,15 @@ const App = () => {
           <StartScreen numQuestions={questions.length} dispatch={dispatch} />
         )}
         {status === "active" && (
-          <Question
-            question={questions[index]}
-            key={questions[index].id}
-            dispatch={dispatch}
-            answer={answer}
-          />
+          <>
+            <Question
+              question={questions[index]}
+              key={questions[index].id}
+              dispatch={dispatch}
+              answer={answer}
+            />
+            <NextButton dispatch={dispatch} answer={answer} />
+          </>
         )}
       </Main>
     </div>
