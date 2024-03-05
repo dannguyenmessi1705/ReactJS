@@ -1,0 +1,15 @@
+# Tạo Project Vite App
+- `npm create vite-app@version` hoặc `yarn create vite-app@version` để tạo project mới
+- Sau đó đặt tên cho project và framework, ngôn ngữ sử dụng
+- Truy cập vào thư mục project và chạy `npm install` hoặc `yarn install` để cài đặt các package cần thiết
+- Để cài eslint cho react, chạy `npm install eslint vite-plugin-eslint eslint-config-react-app --save-dev` hoặc `yarn add eslint vite-plugin-eslint eslint-config-react-app --dev`
+- Thêm file `.eslintrc.js` vào thư mục project với nội dung sau:
+```json
+{
+    "extends": "react-app"
+}
+```
+- Import module `vite-plugin-eslint` vào file `vite.config.js` để sử dụng eslint
+# Vite vs `npx create-react-app`
+- Vite: Tạo project nhanh hơn, không cần cài đặt các package cần thiết
+- `npx create-react-app`: Tạo project chậm hơn, cần cài đặt các package cần thiết
