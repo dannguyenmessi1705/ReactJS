@@ -1,0 +1,16 @@
+.nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: #d36060;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.nav li {
+    list-style: none;
+    margin: 0 1rem;
+}
+
+.nav :global(.active) {
+    background-color: green;
+}
