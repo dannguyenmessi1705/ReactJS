@@ -30,3 +30,28 @@ const App = () => {
     </BrowserRouter>
   );
 };
+```
+- Tại các component, sử dụng `Link` và `NavLink` để chuyển hướng giữa các trang. Sử dụng thay thế cho thẻ `a` trong HTML. Vì khi sử dụng thẻ `a`, trang sẽ bị tải lại. Còn `Link` và `NavLink` giúp chuyển hướng giữa các trang mà không cần phải tải lại trang.
+- `NavLink` sẽ thêm class `active` vào thẻ `a` (lúc render ra) khi đang ở trang đó. Còn `Link` sẽ không thêm bất cứ thứ gì. Mỗi cái đều có lợi ích riêng.
+```jsx
+import { Link, NavLink } from 'react-router-dom';
+const Header = () => {
+  return (
+    <header>
+      <nav>
+        <ul>
+          <li>
+            <NavLink to="/" end>Home</NavLink> {/* end: chỉ khi path chính xác với path của NavLink thì mới thêm class active */}
+          </li>
+          <li>
+            <NavLink to="/about">About</NavLink>
+          </li>
+          <li>
+            <NavLink to="/contact">Contact</NavLink>
+          </li>
+        </ul>
+      </nav>
+    </header>
+  );
+};
+```

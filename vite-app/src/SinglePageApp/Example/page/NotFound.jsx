@@ -1,7 +1,11 @@
+import NavPage from "../components/NavPage";
 function NotFound() {
-    return (
-        <h1>404 Error</h1>
-    )
+  return (
+    <div>
+      <NavPage />
+      <h1>404 Error</h1>
+    </div>
+  );
 }
 
-export default NotFound
+export default NotFound;

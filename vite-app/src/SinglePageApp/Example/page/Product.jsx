@@ -1,7 +1,11 @@
+import NavPage from "../components/NavPage";
 function Product() {
-    return (
-        <h1>Product Page</h1>
-    )
+  return (
+    <div>
+      <NavPage />
+      <h1>Product Page</h1>
+    </div>
+  );
 }
 
-export default Product
+export default Product;
