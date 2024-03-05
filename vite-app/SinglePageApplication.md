@@ -55,3 +55,42 @@ const Header = () => {
   );
 };
 ```
+## 4. Lồng các Route vào trong 1 Route và tạo chỉ mục (index) cho Route
+- VD: Ta có link `/about` và `/about/team`, `/about/personal`. Ta muốn `/about` là trang chính, `/about/team` và `/about/personal` là các trang con của `/about`.
+- Với `index` của Route `/about`, khi truy cập `/about` sẽ hiển thị mặc định trang được chỉ định trong `index`.
+- Tại `App.jsx`, ta sẽ lồng các Route vào trong 1 Route và tạo chỉ mục (index) cho Route `/about`.
+- Khi lồng các Route vào trong 1 Route, đồng nghĩa với việc lồng các component vào nhau. Khi đó sử dụng `<Outlet />` để hiển thị các Route con trong Route cha. Cách sử dụng `<Outlet />` tương tự như `{props.children}` trong React.
+```jsx
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import About from './pages/About';
+import Team from './pages/Team';
+import Personal from './pages/Personal';
+import NotFound from './pages/NotFound';
+const App = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />}>
+          <Route index element={<Team />} /> {/* Chỉ mục (index) cho Route /about */}
+          <Route path="team" element={<Team />} />
+          <Route path="personal" element={<Personal />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+```
+## 5. Lưu ý
+- Khi đặt các path cho đường dẫn, tốt nhất không nên ghi `/` Chỉ được phép ghi `/` khi muốn đường dẫn đó là path gốc.
+``` txt
+localhost:3000/rootpath/childpath
+```
+- Được phép khai báo `/rootpath` nhưng sau đó chỉ được ghi `childpath`, như vậy nó mới hiểu `childpath` là đường dẫn phía sau của `rootpath`
+- VD
+``` jsx
+<Route path="/rootpath" element={<p>Root</p>}>
+  <Route path="childpath" element={<p>Child</p>}/>
+<Route/>
