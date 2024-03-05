@@ -1,11 +1,15 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import React from "react";
+import ReactDOM from "react-dom/client";
 // import App from './App.jsx'
 // import './index.css'
-import App from './SinglePageApp/Example/App.jsx'
+// import App from './SinglePageApp/Example/App.jsx'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+// WorldWise
+import App from "./SinglePageApp/WorldWise/App";
+import "./SinglePageApp/WorldWise/WorldWise.css";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);
