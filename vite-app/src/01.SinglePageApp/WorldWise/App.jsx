@@ -7,8 +7,9 @@ import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
 import AppLayout from "./pages/AppLayout";
 import CityList from "./components/CityList";
-import { useEffect, useState } from "react";
 import City from "./components/City";
+import Form from "./components/Form";
+import { useEffect, useState } from "react";
 
 const URL_API = "http://localhost:8017";
 
@@ -42,6 +43,7 @@ function App() {
           {/* Tạo param cho route, trước đó phải thêm Link đến params này */}
           <Route path="cities/:id" element={<City/>}></Route>
           <Route path="countries" element={<CountryList cities={cities} isLoading={isLoading} />}></Route>
+          <Route path="form" element={<Form />}></Route>
         </Route>
         <Route path="/pricing" element={<Pricing />}></Route>
         <Route path="/product" element={<Product />}></Route>
