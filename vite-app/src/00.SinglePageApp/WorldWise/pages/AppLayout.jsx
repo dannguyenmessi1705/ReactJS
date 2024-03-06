@@ -6,7 +6,6 @@ function AppLayout() {
   return (
     <div className={styles.app}>
       <SideBar />
-      <Outlet />
       <Map />
     </div>
   );

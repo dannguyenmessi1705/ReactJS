@@ -5,8 +5,8 @@ import ReactDOM from "react-dom/client";
 // import App from './SinglePageApp/Example/App.jsx'
 
 // WorldWise
-import App from "./SinglePageApp/WorldWise/App";
-import "./SinglePageApp/WorldWise/WorldWise.css";
+import App from "./00.SinglePageApp/WorldWise/App";
+import "./00.SinglePageApp/WorldWise/WorldWise.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
