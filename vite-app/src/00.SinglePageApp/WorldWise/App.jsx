@@ -7,6 +7,7 @@ import PageNotFound from "./pages/PageNotFound";
 import AppLayout from "./pages/AppLayout";
 import CityList from "./components/CityList";
 import { useEffect, useState } from "react";
+import CountryList from "./components/CountryList";
 
 const URL_API = "http://localhost:8017";
 
@@ -37,7 +38,7 @@ function App() {
         <Route path="/app" element={<AppLayout />}>
           <Route index element={<CityList cities={cities} isLoading={isLoading}/>}></Route>
           <Route path="cities" element={<CityList cities={cities} isLoading={isLoading}/>}></Route>
-          <Route path="countries" element={<p>List of countries</p>}></Route>
+          <Route path="countries" element={<CountryList cities={cities} isLoading={isLoading} />}></Route>
         </Route>
         <Route path="/pricing" element={<Pricing />}></Route>
         <Route path="/product" element={<Product />}></Route>
