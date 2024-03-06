@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import CountryList from "./components/CountryList";
 import Homepage from "./pages/Homepage";
 import Pricing from "./pages/Pricing";
 import Product from "./pages/Product";
@@ -7,7 +8,7 @@ import PageNotFound from "./pages/PageNotFound";
 import AppLayout from "./pages/AppLayout";
 import CityList from "./components/CityList";
 import { useEffect, useState } from "react";
-import CountryList from "./components/CountryList";
+import City from "./components/City";
 
 const URL_API = "http://localhost:8017";
 
@@ -38,6 +39,8 @@ function App() {
         <Route path="/app" element={<AppLayout />}>
           <Route index element={<CityList cities={cities} isLoading={isLoading}/>}></Route>
           <Route path="cities" element={<CityList cities={cities} isLoading={isLoading}/>}></Route>
+          {/* Tạo param cho route, trước đó phải thêm Link đến params này */}
+          <Route path="cities/:id" element={<City/>}></Route>
           <Route path="countries" element={<CountryList cities={cities} isLoading={isLoading} />}></Route>
         </Route>
         <Route path="/pricing" element={<Pricing />}></Route>
