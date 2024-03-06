@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import CountryList from "./components/CountryList";
 import Homepage from "./pages/Homepage";
 import Pricing from "./pages/Pricing";
@@ -38,11 +38,17 @@ function App() {
         {/* Khai báo các route đến cho các Component */}
         <Route index element={<Homepage />}></Route>
         <Route path="/app" element={<AppLayout />}>
-          <Route index element={<CityList cities={cities} isLoading={isLoading}/>}></Route>
-          <Route path="cities" element={<CityList cities={cities} isLoading={isLoading}/>}></Route>
+          <Route index element={<Navigate replace to="cities" />}></Route>
+          <Route
+            path="cities"
+            element={<CityList cities={cities} isLoading={isLoading} />}
+          ></Route>
           {/* Tạo param cho route, trước đó phải thêm Link đến params này */}
-          <Route path="cities/:id" element={<City/>}></Route>
-          <Route path="countries" element={<CountryList cities={cities} isLoading={isLoading} />}></Route>
+          <Route path="cities/:id" element={<City />}></Route>
+          <Route
+            path="countries"
+            element={<CountryList cities={cities} isLoading={isLoading} />}
+          ></Route>
           <Route path="form" element={<Form />}></Route>
         </Route>
         <Route path="/pricing" element={<Pricing />}></Route>
