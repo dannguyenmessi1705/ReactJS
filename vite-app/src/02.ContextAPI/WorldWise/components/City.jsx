@@ -1,4 +1,8 @@
+import { useEffect } from "react";
+import { useCity } from "../contexts/CitiesContext";
+import { useParams } from "react-router-dom";
 import styles from "./City.module.css";
+import Spinner from "./Spinner";
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat("en", {
@@ -9,13 +13,13 @@ const formatDate = (date) =>
   }).format(new Date(date));
 
 function City() {
-  // TEMP DATA
-  const currentCity = {
-    cityName: "Lisbon",
-    emoji: "🇵🇹",
-    date: "2027-10-31T15:59:59.138Z",
-    notes: "My favorite city so far!",
-  };
+  const { id } = useParams(); // Lấy id từ params của route
+  const {currentCity, getDetailCity, isLoading} = useCity(); // Sử dụng hook useCity để lấy giá trị từ context
+  useEffect(() => {
+    getDetailCity(id); // Gọi hàm getDetailCity để lấy thông tin của city hiện tại
+  }, [id]); // Khi id thay đổi thì gọi lại hàm getDetailCity
+
+  if (isLoading) return <Spinner />; // Nếu đang loading thì hiển thị Spinner
 
   const { cityName, emoji, date, notes } = currentCity;
 

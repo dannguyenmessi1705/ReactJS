@@ -4,6 +4,7 @@ const URL_API = "http://localhost:8017";
 function CityProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [cities, setCities] = useState([]);
+  const [currentCity, setCurrentCity] = useState({}); // Tạo state để lưu trữ thông tin của city hiện tại
   useEffect(() => {
     const fetcData = async () => {
       try {
@@ -20,7 +21,20 @@ function CityProvider({ children }) {
     };
     fetcData();
   }, []);
-  const context = { isLoading, cities }; // Tạo ra một object chứa các giá trị cần thiết
+  const getDetailCity = async(id) => {
+    try {
+      setIsLoading(true);
+      const res = await fetch(`${URL_API}/cities/${id}`);
+      if (!res.ok) throw new Error("Something went wrong");
+      const data = await res.json();
+      setCurrentCity(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const context = { isLoading, cities, currentCity, getDetailCity }; // Tạo ra một object chứa các giá trị cần thiết
   return (
     <CityContext.Provider value={context}>
       {" "}
