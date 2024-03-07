@@ -9,29 +9,8 @@ import AppLayout from "./pages/AppLayout";
 import CityList from "./components/CityList";
 import City from "./components/City";
 import Form from "./components/Form";
-import { useEffect, useState } from "react";
-
-const URL_API = "http://localhost:8017";
 
 function App() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [cities, setCities] = useState([]);
-  useEffect(() => {
-    const fetcData = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch(`${URL_API}/cities`);
-        if (!res.ok) throw new Error("Something went wrong");
-        const data = await res.json();
-        setCities(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetcData();
-  }, []);
   return (
     <BrowserRouter>
       <Routes>
