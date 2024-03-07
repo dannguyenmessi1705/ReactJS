@@ -30,4 +30,13 @@ function CityProvider({ children }) {
   );
 }
 
-export { CityProvider }; // Export ra để sử dụng
+// Hook sử dụng context
+function useCity() {
+    const context = useContext(CityContext); // Lấy giá trị từ context
+    if (!context) {
+      throw new Error("useCity must be used within a CityProvider");
+    } // Nếu không có giá trị thì báo lỗi, Component này chỉ được sử dụng trong CityProvider
+    return context; // Trả về giá trị của context
+}
+
+export { CityProvider, useCity }; // Export ra để sử dụng

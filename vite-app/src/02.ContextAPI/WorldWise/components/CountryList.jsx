@@ -2,7 +2,9 @@ import styles from "./CountryList.module.css";
 import Spinner from "./Spinner";
 import Message from "./Message";
 import CountryItem from "./CountryItem";
-function CountryList({ cities, isLoading }) {
+import { useCity } from "../contexts/CitiesContext";
+function CountryList() {
+  const { cities, isLoading } = useCity();
   if (isLoading) {
     return <Spinner />;
   }
@@ -18,11 +20,15 @@ function CountryList({ cities, isLoading }) {
       return arr; // Trả về mảng cũ
     }
   }, []); // Khởi tạo mảng rỗng
-  return <div className={styles.countryItem}>
-    <ul>
-        {countries.map(country => <CountryItem country={country} key={Math.random()}/>)}
-    </ul>
-  </div>;
+  return (
+    <div className={styles.countryItem}>
+      <ul>
+        {countries.map((country) => (
+          <CountryItem country={country} key={Math.random()} />
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export default CountryList;
