@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import styles from "./Form.module.css";
 import Button from "./Button";
+import ButtonBack from "./ButtonBack";
 
 export function convertToEmoji(countryCode) {
   const codePoints = countryCode
@@ -53,15 +54,7 @@ function Form() {
 
       <div className={styles.buttons}>
         <Button type="primary">Add</Button>
-        <Button
-          type="back"
-          onClick={(e) => {
-            e.preventDefault(); // Ngăn chặn sự kiện mặc định của submit form, để ngăn sau khi submit trang sẽ bị load lại
-            navigate(-1); // Chuyển hướng về trang trước đó
-          }}
-        >
-          &larr;Back
-        </Button>
+        <ButtonBack />
       </div>
     </form>
   );
