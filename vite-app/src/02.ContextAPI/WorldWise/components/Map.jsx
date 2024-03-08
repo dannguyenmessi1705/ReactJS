@@ -13,18 +13,16 @@ import { useEffect, useState } from "react";
 import styles from "./Map.module.css";
 import { useCity } from "../contexts/CitiesContext";
 import Button from "./Button";
+import { useURLLocation } from "../hooks/useURLLocation";
 function Map() {
   const [mapPos, setMapPos] = useState([0, 0]); // Lưu vị trí của map
   const { cities } = useCity(); // Lấy danh sách city từ context
-  const params = useParams(); // Lấy params từ đường dẫn
-  const [searchParams, setSearchParams] = useSearchParams(); // Lấy query từ đường dẫn
   const {
     isLoading: isLoadingPosition,
     getPosition,
     position: geoPosition,
   } = useGeolocation(); // Sử dụng hook useGeolocation để lấy vị trí hiện tại
-  const latMap = searchParams.get("lat"); // Lấy giá trị của query lat
-  const lngMap = searchParams.get("lng"); // Lấy giá trị của query lng
+  const [latMap, lngMap] = useURLLocation(); // Lấy vị trí từ query trong đường dẫn
   // useEffect để lấy vị trí của map từ query trong đường dẫn
   useEffect(() => {
     if (latMap && lngMap) setMapPos([latMap, lngMap]); // Set vị trí của map nếu có query lat và lng
