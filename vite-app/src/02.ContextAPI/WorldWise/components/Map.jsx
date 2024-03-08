@@ -1,19 +1,32 @@
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { useState } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  useMapEvent,
+  useMapEvents,
+} from "react-leaflet";
+import { useEffect, useState } from "react";
 import styles from "./Map.module.css";
 import { useCity } from "../contexts/CitiesContext";
 function Map() {
   const [mapPos, setMapPos] = useState([0, 0]); // Lưu vị trí của map
   const { cities } = useCity(); // Lấy danh sách city từ context
-  const navigate = useNavigate(); // Hàm này giúp chuyển hướng trang
   const params = useParams(); // Lấy params từ đường dẫn
   const [searchParams, setSearchParams] = useSearchParams(); // Lấy query từ đường dẫn
+  const latMap = searchParams.get("lat"); // Lấy giá trị của query lat
+  const lngMap = searchParams.get("lng"); // Lấy giá trị của query lng
+  // useEffect để lấy vị trí của map từ query trong đường dẫn
+  useEffect(() => {
+    if (latMap && lngMap) setMapPos([latMap, lngMap]); // Set vị trí của map nếu có query lat và lng
+  }, [latMap, lngMap]); // Khi latMap hoặc lngMap thay đổi thì gọi lại hàm này
   return (
     <div className={styles.mapContainer}>
       <MapContainer
-        center={[0, 0]}
-        zoom={13}
+        center={mapPos}
+        zoom={6}
         scrollWheelZoom={true}
         className={styles.map}
       >
@@ -33,9 +46,26 @@ function Map() {
             </Marker>
           );
         })}
+        <ChangeMap position={mapPos} />{" "}
+        {/* Component này sẽ thay đổi vị trí của map */}
+        <HandleClickMap />
       </MapContainer>
     </div>
   );
 }
 
+const ChangeMap = ({ position }) => {
+  const map = useMap(); // Lấy map từ thư viện react-leaflet
+  map.setView(position); // Set vị trí mới cho map
+  return null; // Không cần hiển thị gì cả
+}; // Hàm này sẽ thay đổi vị trí của map
+
+const HandleClickMap = () => {
+  const navigate = useNavigate(); // Lấy hàm navigate từ thư viện react-router-dom
+  useMapEvents({
+    click(e) {
+      navigate(`form?lat=${e.latlng.lat}&lng=${e.latlng.lng}`); // Khi click vào map thì thay đổi đường dẫn, chuyển đến trang form và truyền query lat và lng
+    },
+  });
+};
 export default Map;
