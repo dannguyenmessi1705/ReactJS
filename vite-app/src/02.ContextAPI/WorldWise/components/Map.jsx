@@ -8,22 +8,38 @@ import {
   useMapEvent,
   useMapEvents,
 } from "react-leaflet";
+import { useGeolocation } from "../hooks/useGeoLocation";
 import { useEffect, useState } from "react";
 import styles from "./Map.module.css";
 import { useCity } from "../contexts/CitiesContext";
+import Button from "./Button";
 function Map() {
   const [mapPos, setMapPos] = useState([0, 0]); // Lưu vị trí của map
   const { cities } = useCity(); // Lấy danh sách city từ context
   const params = useParams(); // Lấy params từ đường dẫn
   const [searchParams, setSearchParams] = useSearchParams(); // Lấy query từ đường dẫn
+  const {
+    isLoading: isLoadingPosition,
+    getPosition,
+    position: geoPosition,
+  } = useGeolocation(); // Sử dụng hook useGeolocation để lấy vị trí hiện tại
   const latMap = searchParams.get("lat"); // Lấy giá trị của query lat
   const lngMap = searchParams.get("lng"); // Lấy giá trị của query lng
   // useEffect để lấy vị trí của map từ query trong đường dẫn
   useEffect(() => {
     if (latMap && lngMap) setMapPos([latMap, lngMap]); // Set vị trí của map nếu có query lat và lng
   }, [latMap, lngMap]); // Khi latMap hoặc lngMap thay đổi thì gọi lại hàm này
+  // useEffect để lấy vị trí của map từ geolocation (định vị vị trí hiện tại)
+  useEffect(() => {
+    if (geoPosition) setMapPos([geoPosition.lat, geoPosition.lng]); // Set vị trí của map nếu có vị trí từ geolocation
+  }, [geoPosition]); // Khi geoPosition thay đổi thì gọi lại hàm này
   return (
     <div className={styles.mapContainer}>
+      {!geoPosition && ( // Nếu có vị trí từ geolocation thì không hiển thị nút này
+        <Button type="position" onClick={getPosition}>
+          {isLoadingPosition ? "Loading..." : "Get my position"}
+        </Button> 
+      )} {/* Nút này sẽ gọi hàm getPosition để lấy vị trí hiện tại */}
       <MapContainer
         center={mapPos}
         zoom={6}
