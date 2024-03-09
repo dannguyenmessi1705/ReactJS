@@ -10,35 +10,32 @@ import CityList from "./components/CityList";
 import City from "./components/City";
 import Form from "./components/Form";
 import { CityProvider } from "./contexts/CitiesContext";
+import { AuthProvider } from "./contexts/AuthContext";
 
 function App() {
   return (
-    <CityProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Khai báo các route đến cho các Component */}
-          <Route index element={<Homepage />}></Route>
-          <Route path="/app" element={<AppLayout />}>
-            <Route index element={<Navigate replace to="cities" />}></Route>
-            <Route
-              path="cities"
-              element={<CityList />}
-            ></Route>
-            {/* Tạo param cho route, trước đó phải thêm Link đến params này */}
-            <Route path="cities/:id" element={<City />}></Route>
-            <Route
-              path="countries"
-              element={<CountryList />}
-            ></Route>
-            <Route path="form" element={<Form />}></Route>
-          </Route>
-          <Route path="/pricing" element={<Pricing />}></Route>
-          <Route path="/product" element={<Product />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="*" element={<PageNotFound />}></Route>
-        </Routes>
-      </BrowserRouter>
-    </CityProvider>
+    <AuthProvider>
+      <CityProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Khai báo các route đến cho các Component */}
+            <Route index element={<Homepage />}></Route>
+            <Route path="/app" element={<AppLayout />}>
+              <Route index element={<Navigate replace to="cities" />}></Route>
+              <Route path="cities" element={<CityList />}></Route>
+              {/* Tạo param cho route, trước đó phải thêm Link đến params này */}
+              <Route path="cities/:id" element={<City />}></Route>
+              <Route path="countries" element={<CountryList />}></Route>
+              <Route path="form" element={<Form />}></Route>
+            </Route>
+            <Route path="/pricing" element={<Pricing />}></Route>
+            <Route path="/product" element={<Product />}></Route>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="*" element={<PageNotFound />}></Route>
+          </Routes>
+        </BrowserRouter>
+      </CityProvider>
+    </AuthProvider>
   );
 }
 
