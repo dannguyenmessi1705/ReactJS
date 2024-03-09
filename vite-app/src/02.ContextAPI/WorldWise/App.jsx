@@ -9,6 +9,7 @@ import AppLayout from "./pages/AppLayout";
 import CityList from "./components/CityList";
 import City from "./components/City";
 import Form from "./components/Form";
+import ProtectRoute from "./components/ProtectRoute";
 import { CityProvider } from "./contexts/CitiesContext";
 import { AuthProvider } from "./contexts/AuthContext";
 
@@ -20,7 +21,14 @@ function App() {
           <Routes>
             {/* Khai báo các route đến cho các Component */}
             <Route index element={<Homepage />}></Route>
-            <Route path="/app" element={<AppLayout />}>
+            <Route
+              path="/app"
+              element={
+                <ProtectRoute>
+                  <AppLayout />
+                </ProtectRoute>
+              }
+            >
               <Route index element={<Navigate replace to="cities" />}></Route>
               <Route path="cities" element={<CityList />}></Route>
               {/* Tạo param cho route, trước đó phải thêm Link đến params này */}
