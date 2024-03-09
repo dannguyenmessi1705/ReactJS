@@ -21,7 +21,7 @@ function CityProvider({ children }) {
     };
     fetcData();
   }, []);
-  const getDetailCity = async(id) => {
+  const getDetailCity = async (id) => {
     try {
       setIsLoading(true);
       const res = await fetch(`${URL_API}/cities/${id}`);
@@ -34,7 +34,26 @@ function CityProvider({ children }) {
       setIsLoading(false);
     }
   };
-  const context = { isLoading, cities, currentCity, getDetailCity }; // Tạo ra một object chứa các giá trị cần thiết
+  const createCity = async (city) => {
+    try {
+      setIsLoading(true);
+      const res = await fetch(`${URL_API}/cities`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(city),
+      });
+      if (!res.ok) throw new Error("Something went wrong");
+      const data = await res.json();
+      setCities((cities) => [...cities, data]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const context = { isLoading, cities, currentCity, getDetailCity, createCity }; // Tạo ra một object chứa các giá trị cần thiết
   return (
     <CityContext.Provider value={context}>
       {" "}
@@ -46,11 +65,11 @@ function CityProvider({ children }) {
 
 // Hook sử dụng context
 function useCity() {
-    const context = useContext(CityContext); // Lấy giá trị từ context
-    if (!context) {
-      throw new Error("useCity must be used within a CityProvider");
-    } // Nếu không có giá trị thì báo lỗi, Component này chỉ được sử dụng trong CityProvider
-    return context; // Trả về giá trị của context
+  const context = useContext(CityContext); // Lấy giá trị từ context
+  if (!context) {
+    throw new Error("useCity must be used within a CityProvider");
+  } // Nếu không có giá trị thì báo lỗi, Component này chỉ được sử dụng trong CityProvider
+  return context; // Trả về giá trị của context
 }
 
 export { CityProvider, useCity }; // Export ra để sử dụng

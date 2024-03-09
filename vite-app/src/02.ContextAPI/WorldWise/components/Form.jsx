@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import styles from "./Form.module.css";
 import Button from "./Button";
@@ -10,6 +12,7 @@ import { useURLLocation } from "../hooks/useURLLocation";
 import { useEffect } from "react";
 import Spinner from "./Spinner";
 import Message from "./Message";
+import { useCity } from "../contexts/CitiesContext";
 
 export function convertToEmoji(countryCode) {
   const codePoints = countryCode
@@ -29,6 +32,7 @@ function Form() {
   const [emoji, setEmoji] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const {createCity, isLoading: isLoadingForm} = useCity(); // Lấy hàm createCity, biến isLoading từ context
   // useEffect dùng để lấy thông tin về quốc gia từ vị trí hiện tại
   useEffect(() => {
     const loadCity = async () => {
@@ -53,10 +57,29 @@ function Form() {
     if (lat && lng) loadCity(); // Nếu có lat và lng thì gọi hàm loadCity
   }, [lat, lng]); // Khi lat hoặc lng thay đổi thì gọi lại hàm này
 
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Ngăn chặn form gửi đi mặc định của trình duyệt, nếu không sẽ reload trang
+    if (!cityName || !country) return; // Nếu không có cityName hoặc country thì không làm gì cả
+    const newTrip = {
+      cityName,
+      country,
+      emoji,
+      date,
+      notes,
+      position: { lat, lng },
+    };
+    await createCity(newTrip); // Gọi hàm createCity từ context
+    navigate("/app/cities"); // Chuyển hướng đến trang cities
+  };
+
+  if (!lat || !lng) return <Message message="Please choose location" />; // Nếu không có lat hoặc lng thì hiển thị thông báo
   if (isLoading) return <Spinner />; // Nếu đang loading thì hiển thị Spinner
   if (error) return <Message message={error} />; // Nếu có lỗi thì hiển thị lỗi
   return (
-    <form className={styles.form}>
+    <form
+      className={`${styles.form} ${isLoadingForm ? styles.loading : ""}`}
+      onSubmit={handleSubmit}
+    >
       <div className={styles.row}>
         <label htmlFor="cityName">City name</label>
         <input
@@ -69,11 +92,13 @@ function Form() {
 
       <div className={styles.row}>
         <label htmlFor="date">When did you go to {cityName}?</label>
-        <input
+        <DatePicker
           id="date"
-          onChange={(e) => setDate(e.target.value)}
-          value={date}
+          selected={date}
+          onChange={(date) => setDate(date)}
+          dateFormat="dd/MM/yyyy"
         />
+        {/* Để sử dụng DatePicker thì cần import thư viện react-datepicker */}
       </div>
 
       <div className={styles.row}>
