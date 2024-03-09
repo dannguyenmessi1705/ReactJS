@@ -53,7 +53,21 @@ function CityProvider({ children }) {
       setIsLoading(false);
     }
   };
-  const context = { isLoading, cities, currentCity, getDetailCity, createCity }; // Tạo ra một object chứa các giá trị cần thiết
+
+  const deleteCity = async (id) => {
+    try {
+      setIsLoading(true);
+      await fetch(`${URL_API}/cities/${id}`, {
+        method: "DELETE",
+      });
+      setCities((cities) => cities.filter(city => city.id !== id));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const context = { isLoading, cities, currentCity, getDetailCity, createCity, deleteCity }; // Tạo ra một object chứa các giá trị cần thiết
   return (
     <CityContext.Provider value={context}>
       {" "}
