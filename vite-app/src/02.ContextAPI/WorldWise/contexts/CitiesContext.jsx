@@ -1,42 +1,69 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 const CityContext = createContext(); // Tạo ra một Context mới
 const URL_API = "http://localhost:8017";
+const initialState = {
+  isLoading: false,
+  cities: [],
+  currentCity: {},
+  error: "",
+}; // Trạng thái ban đầu của state
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "cities/loaded":
+      return { ...state, cities: action.payload, isLoading: false };
+    case "city/detail":
+      return { ...state, currentCity: action.payload, isLoading: false };
+    case "city/create":
+      return {
+        ...state,
+        cities: [...state.cities, action.payload],
+        isLoading: false,
+      };
+    case "city/delete":
+      return {
+        ...state,
+        cities: state.cities.filter((city) => city.id !== action.payload),
+        isLoading: false,
+      };
+    case "loading":
+      return { ...state, isLoading: true };
+    case "error":
+      return { ...state, error: action.payload, isLoading: false };
+    default:
+      throw new Error("Unknown action type");
+  }
+};
 function CityProvider({ children }) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [cities, setCities] = useState([]);
-  const [currentCity, setCurrentCity] = useState({}); // Tạo state để lưu trữ thông tin của city hiện tại
+  const [state, dispatch] = useReducer(reducer, initialState); // Khai bao state va dispatch
+  const { isLoading, cities, currentCity, error } = state;
   useEffect(() => {
     const fetcData = async () => {
       try {
-        setIsLoading(true);
+        dispatch({ type: "loading" });
         const res = await fetch(`${URL_API}/cities`);
-        if (!res.ok) throw new Error("Something went wrong");
         const data = await res.json();
-        setCities(data);
+        dispatch({ type: "cities/loaded", payload: data });
       } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
+        dispatch({ type: "error", payload: "Something went wrong" });
       }
     };
     fetcData();
   }, []);
   const getDetailCity = async (id) => {
+    if (Number(currentCity.id) === Number(id)) return;
     try {
-      setIsLoading(true);
+      dispatch({ type: "loading" });
       const res = await fetch(`${URL_API}/cities/${id}`);
-      if (!res.ok) throw new Error("Something went wrong");
       const data = await res.json();
-      setCurrentCity(data);
+      dispatch({ type: "city/detail", payload: data });
     } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
+      dispatch({ type: "error", payload: "Something went wrong" });
     }
   };
   const createCity = async (city) => {
     try {
-      setIsLoading(true);
+      dispatch({ type: "loading" });
       const res = await fetch(`${URL_API}/cities`, {
         method: "POST",
         headers: {
@@ -44,30 +71,33 @@ function CityProvider({ children }) {
         },
         body: JSON.stringify(city),
       });
-      if (!res.ok) throw new Error("Something went wrong");
       const data = await res.json();
-      setCities((cities) => [...cities, data]);
+      dispatch({ type: "city/create", payload: data });
     } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
+      dispatch({ type: "error", payload: "Something went wrong" });
     }
   };
 
   const deleteCity = async (id) => {
     try {
-      setIsLoading(true);
+      dispatch({ type: "loading" });
       await fetch(`${URL_API}/cities/${id}`, {
         method: "DELETE",
       });
-      setCities((cities) => cities.filter(city => city.id !== id));
+      dispatch({ type: "city/delete", payload: id });
     } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
+      dispatch({ type: "error", payload: "Something went wrong" });
     }
   };
-  const context = { isLoading, cities, currentCity, getDetailCity, createCity, deleteCity }; // Tạo ra một object chứa các giá trị cần thiết
+  const context = {
+    isLoading,
+    cities,
+    currentCity,
+    error,
+    getDetailCity,
+    createCity,
+    deleteCity,
+  }; // Tạo ra một object chứa các giá trị cần thiết
   return (
     <CityContext.Provider value={context}>
       {" "}
