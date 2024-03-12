@@ -3,7 +3,7 @@ import { useCity } from "../contexts/CitiesContext";
 import { useParams } from "react-router-dom";
 import styles from "./City.module.css";
 import Spinner from "./Spinner";
-import ButtonBack from "./ButtonBack"
+import ButtonBack from "./ButtonBack";
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat("en", {
@@ -15,10 +15,15 @@ const formatDate = (date) =>
 
 function City() {
   const { id } = useParams(); // Lấy id từ params của route
-  const {currentCity, getDetailCity, isLoading} = useCity(); // Sử dụng hook useCity để lấy giá trị từ context
+  const { currentCity, getDetailCity, isLoading } = useCity(); // Sử dụng hook useCity để lấy giá trị từ context
   useEffect(() => {
     getDetailCity(id); // Gọi hàm getDetailCity để lấy thông tin của city hiện tại
-  }, [id]); // Khi id thay đổi thì gọi lại hàm getDetailCity
+  }, [id, getDetailCity]); // Khi id thay đổi thì gọi lại hàm getDetailCity
+  /* 
+    Tuy nhiên nếu truyền mỗi id vào dependences array thì eslint sẽ báo lỗi, chúng ta phải truyền thêm hàm getDetailCity nữa
+    Nhưng khi truyền getDetailCity vào sẽ gây ra vòng lặp vô hạn, vì mỗi lần useEffect thực hiện thì getDetailCity trong Provider cũng thực hiện
+    Với function thuộc kiểu tham chiếu, lúc render lại nó sẽ luôn tạo ra 1 object khác => Dùng useCallback() ở Provider
+  */
 
   if (isLoading) return <Spinner />; // Nếu đang loading thì hiển thị Spinner
 

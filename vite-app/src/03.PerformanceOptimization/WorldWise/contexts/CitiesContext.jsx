@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useCallback,
+} from "react";
 const CityContext = createContext(); // Tạo ra một Context mới
 const URL_API = "http://localhost:8017";
 const initialState = {
@@ -50,17 +56,21 @@ function CityProvider({ children }) {
     };
     fetcData();
   }, []);
-  const getDetailCity = async (id) => {
-    if (Number(currentCity.id) === Number(id)) return;
-    try {
-      dispatch({ type: "loading" });
-      const res = await fetch(`${URL_API}/cities/${id}`);
-      const data = await res.json();
-      dispatch({ type: "city/detail", payload: data });
-    } catch (error) {
-      dispatch({ type: "error", payload: "Something went wrong" });
-    }
-  };
+  // Sử dụng useCallback
+  const getDetailCity = useCallback(
+    async (id) => {
+      if (Number(currentCity.id) === Number(id)) return;
+      try {
+        dispatch({ type: "loading" });
+        const res = await fetch(`${URL_API}/cities/${id}`);
+        const data = await res.json();
+        dispatch({ type: "city/detail", payload: data });
+      } catch (error) {
+        dispatch({ type: "error", payload: "Something went wrong" });
+      }
+    },
+    [currentCity.id] // Khi currentCity thay đổi thì mới chạy lại, không thì nó sẽ lấy giá trị đã lưu trước đo từ cache
+  );
   const createCity = async (city) => {
     try {
       dispatch({ type: "loading" });
