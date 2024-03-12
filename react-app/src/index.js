@@ -11,7 +11,10 @@ import ReactDOM from "react-dom/client";
 // import ClassyWeather from "./03.BasicClasses/ClassyWeather";
 // import "./04.UseReducer/UseReducer.css";
 // import UseReducer from "./04.UseReducer/UseReducer";
-import BankAccount from "./04.UseReducer/BankAccount/BankAccount";
+
+// import BankAccount from "./04.UseReducer/BankAccount/BankAccount";
+import WorkTimer from "./05.Performance/App";
+import "./05.Performance/index.css"
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // StrictMode là một công cụ để kiểm tra các warning và cảnh báo trong ứng dụng React (nhưng không phải là một công cụ để kiểm tra lỗi)
@@ -21,5 +24,6 @@ root.render(
   // <ConvertCurrency />  // {/* useEffect */}
   // <CustomHook /> // {/* Custom Hook */}
   // <ClassyWeather /> // {/* Class Component (Basic Classes) */}
-  <BankAccount /> // {/* useReducer */}
+  // <BankAccount /> // {/* useReducer */}
+  <WorkTimer /> // {/* Performance */}
 );
