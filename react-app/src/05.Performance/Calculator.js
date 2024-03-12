@@ -20,14 +20,21 @@ function Calculator({ workouts, allowSound }) {
   };
 
   const handleDec = () => {
-    setDuration((duration) => duration > 1 ? Math.ceil(duration) - 1 : 0);
+    setDuration((duration) => (duration > 1 ? Math.ceil(duration) - 1 : 0));
   };
 
-  const playSound = function () {
-    if (!allowSound) return;
-    const sound = new Audio(clickSound);
-    sound.play();
-  };
+  useEffect(() => {
+    const playSound = function () {
+      if (!allowSound) return;
+      const sound = new Audio(clickSound);
+      sound.play();
+    };
+    playSound();
+  }, [duration, allowSound]); // Sử dụng useEffect để đồng bộ lại giá trị duration và allowSound khi thay đổi
+  /*
+  - Nếu để playSound vào trong các hàm handleInc, handleDec, useEffect cập nhật duration thì mỗi khi duration thay đổi thì playSound sẽ được gọi lại 2 lần
+  Nguyên nhân do, nếu handleInc sẽ gọi playsound, sau đó useEffect cập nhật duration sẽ gọi lại playsound một lần nữa
+  */
 
   return (
     <>
