@@ -9,8 +9,12 @@ import ReactDOM from "react-dom/client";
 // import "./01.SinglePageApp/WorldWise/WorldWise.css";
 
 // WorldWise 02.ContextAPI
-import App from "./02.ContextAPI/WorldWise/App";
-import "./02.ContextAPI/WorldWise/WorldWise.css";
+// import App from "./02.ContextAPI/WorldWise/App";
+// import "./02.ContextAPI/WorldWise/WorldWise.css";
+
+// Worldwise 03.PerformanceOptimization
+import App from "./03.PerformanceOptimization/WorldWise/App";
+import "./03.PerformanceOptimization/WorldWise/WorldWise.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
