@@ -16,10 +16,6 @@ import ReactDOM from "react-dom/client";
 import App from "./03.PerformanceOptimization/WorldWise/App";
 import "./03.PerformanceOptimization/WorldWise/WorldWise.css";
 
-// Work-Timer 03.PerformanceOptimization
-// import App from "./03.PerformanceOptimization/Workout-Timer/App";
-// import "./03.PerformanceOptimization/Workout-Timer/index.css";
-
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <App />
