@@ -1,27 +1,20 @@
-// Store lưu trữ tất cả state của ứng dụng, và cung cấp các phương thức để thay đổi state
-const initialState = {
-  balance: 0,
-  loan: 0,
-  loanPurpose: "",
-}; // state mặc định của ứng dụng
+import { createStore, combineReducers } from "redux";
+import accountReducer from "./features/accounts/accountSlice"; // Nhập hàm reducer từ file accountSlice.js
+import customerReducer from "./features/customers/customerSlice"; // Nhập hàm reducer từ file customerSlice.js
 
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "account/deposit":
-      return { ...state, balance: state.balance + action.payload };
-    case "account/withdraw":
-      return { ...state, balance: state.balance - action.payload };
-    case "account/requestLoan":
-      if (state.loan > 0) return state;
-      return { ...state, loan: action.payload, loanPurpose: action.purpose };
-    case "account/payLoan":
-      return {
-        ...state,
-        loan: 0,
-        loanPurpose: "",
-        balance: state.balance - state.loan,
-      };
-    default:
-      return state;
-  }
-}; // reducer là một hàm nhận vào state và action, trả về state mới sau khi thay đổi
+const reducer = combineReducers({
+  account: accountReducer,
+  customer: customerReducer,
+}); // Kết hợp nhiều reducer thành một reducer lớn
+
+const store = createStore(reducer); // Tạo store từ reducer
+
+/*
+import {deposit, withdraw} from "./features/accounts/accountSlice";
+import {create, updateName} from "./features/customers/customerSlice";
+store.dispatch(deposit(100)); // Thực hiện một action deposit, redux sẽ gọi reducer để thay đổi state của account
+store.dispatch(withdraw(50)); // Thực hiện một action withdraw, redux sẽ gọi reducer để thay đổi state của account
+store.dispatch(create("Alice", "123")); // Thực hiện một action create, redux sẽ gọi reducer để thay đổi state của customer
+store.dispatch(updateName("Bob")); // Thực hiện một action updateName, redux sẽ gọi reducer để thay đổi state của customer
+*/
+export default store; // Xuất store để sử dụng trong ứng dụng
