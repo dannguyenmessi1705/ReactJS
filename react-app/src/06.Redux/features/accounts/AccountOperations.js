@@ -15,8 +15,9 @@ function AccountOperations() {
 
   function handleDeposit() {
     if (!depositAmount) return;
-    dispatch(deposit(depositAmount)); // Truyền action deposit với tham số depositAmount vào store
+    dispatch(deposit(depositAmount, currency)); // Truyền action deposit với tham số depositAmount, currency vào store
     setDepositAmount(""); // Reset lại giá trị của input sau khi thực hiện action
+    setCurrency(""); // Reset lại giá trị của input sau khi thực hiện action
   }
 
   function handleWithdrawal() {

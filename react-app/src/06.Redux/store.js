@@ -1,4 +1,8 @@
-import { createStore, combineReducers } from "redux";
+import { createStore, combineReducers, applyMiddleware } from "redux";
+// createStore: Hàm tạo store
+// combineReducers: Hàm kết hợp nhiều reducer thành một reducer lớn
+// applyMiddleware: Hàm thêm các middleware vào store
+import {thunk} from "redux-thunk"; // Import thư viện redux-thunk để sử dụng middleware
 import accountReducer from "./features/accounts/accountSlice"; // Nhập hàm reducer từ file accountSlice.js
 import customerReducer from "./features/customers/customerSlice"; // Nhập hàm reducer từ file customerSlice.js
 
@@ -7,7 +11,7 @@ const reducer = combineReducers({
   customer: customerReducer,
 }); // Kết hợp nhiều reducer thành một reducer lớn
 
-const store = createStore(reducer); // Tạo store từ reducer
+const store = createStore(reducer, applyMiddleware(thunk)); // Tạo store từ reducer, và thêm middleware  thunk vào store để xử lý các action không đồng bộ
 
 /*
 import {deposit, withdraw} from "./features/accounts/accountSlice";
