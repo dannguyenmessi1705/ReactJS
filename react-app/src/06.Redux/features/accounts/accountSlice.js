@@ -1,3 +1,4 @@
+/* CLASSIC REDUX
 // Store lưu trữ tất cả state của ứng dụng, và cung cấp các phương thức để thay đổi state
 const initialState = {
   balance: 0,
@@ -84,3 +85,55 @@ export function payLoan() {
   };
 }
 // Action creator là một hàm trả về một action
+*/
+
+/* MODERN REDUX (REDUX TOOLKIT) */
+import { createSlice } from "@reduxjs/toolkit"; // Import createSlice từ thư viện redux toolkit để tạo ra một slice (một phần của store)
+const initialState = {
+  balance: 0,
+  loan: 0,
+  loanPurpose: "",
+  isLoading: false,
+}; // state mặc định của ứng dụng
+
+ // Tạo ra một slice với tên là account, state mặc định là initialState, và các reducers là các hàm thay đổi state
+const accountReducer = createSlice({
+  name: "account", // Tên của slice
+  initialState: initialState, // State mặc định của slice
+  reducers: { // Các reducers là các hàm thay đổi state
+    deposit: (state, action) => { // Hàm thay đổi state khi thực hiện action deposit (type: "account/deposit" vì redux toolkit tự động tạo ra type từ tên của slice và tên của reducer)
+      state.balance += action.payload;
+      state.isLoading = false;
+    },
+    withdraw: (state, action) => { // Hàm thay đổi state khi thực hiện action withdraw (type: "account/withdraw")
+      if (state.balance < action.payload) return;
+      state.balance -= action.payload;
+    },
+    requestLoan: { // Hàm thay đổi state khi thực hiện action requestLoan (type: "account/requestLoan")
+      prepare: (amount, loanPurpose) => { // Hàm prepare trả về một object chứa payload của action
+        return {
+          payload: {
+            amount,
+            loanPurpose,
+          },
+        };
+      },
+      reducer: (state, action) => { // Hàm reducer thực hiện thay đổi state
+        if (state.loan > 0) return;
+        state.balance += action.payload.amount;
+        state.loanPurpose = action.payload.loanPurpose;
+        state.loan = action.payload.amount;
+      },
+    },
+    payLoan: (state, action) => { // Hàm thay đổi state khi thực hiện action payLoan (type: "account/payLoan")
+      if (state.balance < state.loan) return;
+      state.balance -= state.loan;
+      state.loan = 0;
+      state.loanPurpose = "";
+    },
+  },
+});
+
+export const { deposit, withdraw, requestLoan, payLoan } =
+  accountReducer.actions; // Export các action creator từ slice account để sử dụng trong component
+export default accountReducer.reducer; // Export reducer từ slice account để sử dụng trong store
