@@ -1,10 +1,16 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux"; // Import useDispatch từ thư viện react-redux để sử dụng với mục đích truyền action đến store
+import { create } from "./customerSlice"; // Import action từ file customerSlice.js để sử dụng
 
 function Customer() {
   const [fullName, setFullName] = useState("");
   const [nationalId, setNationalId] = useState("");
+  const dispatch = useDispatch();
 
-  function handleClick() {}
+  function handleClick() {
+    if (!fullName || !nationalId) return; // Kiểm tra nếu không nhập đủ thông tin thì không thực hiện action
+    dispatch(create(fullName, nationalId)); // Truyền action create với tham số fullName, nationalId vào store
+  }
 
   return (
     <div>

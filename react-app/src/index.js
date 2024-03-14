@@ -20,6 +20,7 @@ import ReactDOM from "react-dom/client";
 import store from "./06.Redux/store";
 import { Provider } from "react-redux";
 import App from "./06.Redux/App";
+import "./06.Redux/index.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // StrictMode là một công cụ để kiểm tra các warning và cảnh báo trong ứng dụng React (nhưng không phải là một công cụ để kiểm tra lỗi)
@@ -31,7 +32,9 @@ root.render(
   // <ClassyWeather /> // {/* Class Component (Basic Classes) */}
   // <BankAccount /> // {/* useReducer */}
   // <WorkTimer /> // {/* Performance */}
-  <Provider store={store}> {/* Redux */}
+  <Provider store={store}>
+    {" "}
+    {/* Redux */}
     <App />
   </Provider>
 );
