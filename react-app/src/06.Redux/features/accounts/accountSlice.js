@@ -138,6 +138,10 @@ const accountReducer = createSlice({
       state.loan = 0;
       state.loanPurpose = "";
     },
+    convertCurrency: (state, action) => {
+      // Hàm thay đổi state khi thực hiện action convertCurrency (type: "account/convertCurrency")
+      state.isLoading = true;
+    },
   },
 });
 
