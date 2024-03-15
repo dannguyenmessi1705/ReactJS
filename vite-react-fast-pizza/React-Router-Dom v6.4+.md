@@ -48,3 +48,16 @@ function App() {
 }
 ```
 - Sau đó sử dụng `<Outlet />` để hiển thị các Route con từ các Route cha
+>Home.js
+```jsx
+import { Outlet } from 'react-router-dom';
+function Home() {
+    return (
+        <div>
+            <h1>Home</h1>
+            <Outlet />
+        </div>
+    )
+}
+```
+
