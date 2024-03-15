@@ -5,6 +5,9 @@ import Cart from "./features/cart/Cart";
 import Order from "./features/order/Order";
 import CreateOrder from "./features/order/CreateOrder";
 import AppLayout from "./ui/AppLayout";
+
+import { menuLoader } from "./services/fetchData"; // Import menuLoader từ fetchData.js để fetch data từ API
+
 // Tạo router với các route tương ứng với các component, dùng createBrowserRouter để có thể làm việc với Data Fetching (BrowserRouter thì không thể làm việc với Data Fetching
 const router = createBrowserRouter([
   {
@@ -18,6 +21,7 @@ const router = createBrowserRouter([
       {
         path: "/menu", // Route này sẽ render component Menu "/menu"
         element: <Menu />,
+        loader: menuLoader, // Sử dụng loader để fetch data từ API và trả về menu cho component Menu
       },
       {
         path: "/cart", // Route này sẽ render component Cart "/cart"

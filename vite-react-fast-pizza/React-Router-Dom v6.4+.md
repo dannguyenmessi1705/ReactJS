@@ -61,3 +61,38 @@ function Home() {
 }
 ```
 
+## 1.3. Sử dụng `loader` để fetching data vào react-router-dom
+- Khởi tọa 1 function để fetch data từ API.
+>fetchUser.js
+```js
+function fetchUser() {
+    return fetch('https://api.example.com/user').then(res => res.json());
+}
+```
+- Sử dụng `loader` để fetch data từ API vào react-router-dom
+>App.js
+```jsx
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import fetchUser from './fetchUser';
+const router = createBrowserRouter([
+    {
+        path: '/',
+        element: <Home />,
+        loader: fetchUser
+    }
+])
+```
+- Sử dụng `useLoaderData` để lấy data từ API trong component
+>Home.js
+```jsx
+import { useLoaderData } from 'react-router-dom';
+function Home() {
+    const user = useLoaderData();
+    return (
+        <div>
+            <h1>Home</h1>
+            <p>{user.name}</p>
+        </div>
+    )
+}
+```
