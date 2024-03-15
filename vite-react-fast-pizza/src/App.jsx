@@ -5,6 +5,7 @@ import Cart from "./features/cart/Cart";
 import Order from "./features/order/Order";
 import CreateOrder from "./features/order/CreateOrder";
 import AppLayout from "./ui/AppLayout";
+import Error from "./ui/Error"; 
 
 import { menuLoader } from "./services/fetchData"; // Import menuLoader từ fetchData.js để fetch data từ API
 
@@ -12,6 +13,7 @@ import { menuLoader } from "./services/fetchData"; // Import menuLoader từ fet
 const router = createBrowserRouter([
   {
     element: <AppLayout />, // AppLayout sẽ là layout chung cho tất cả các route
+    errorElement: <Error />, // Error sẽ là layout cho các route khi có lỗi
     children: [
       // Các route con
       {
@@ -22,6 +24,7 @@ const router = createBrowserRouter([
         path: "/menu", // Route này sẽ render component Menu "/menu"
         element: <Menu />,
         loader: menuLoader, // Sử dụng loader để fetch data từ API và trả về menu cho component Menu
+        errorElement: <Error />, // Error sẽ là layout cho route "/menu" khi có lỗi, nếu có lỗi trong route "/menu" thì sẽ render Error ở đây, không phải ở AppLayout
       },
       {
         path: "/cart", // Route này sẽ render component Cart "/cart"

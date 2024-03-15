@@ -118,3 +118,29 @@ function Home() {
     )
 }
 ```
+
+## 1.5. Sử dụng `useRouteError` để kiểm tra lỗi khi chuyển trang
+- Sử dụng `useRouteError` để kiểm tra lỗi khi chuyển trang, nếu có lỗi thì hiển thị thông báo lỗi
+>Error.js
+```jsx
+import { useRouteError } from 'react-router-dom';
+function Error() {
+    const error = useRouteError();
+    if (error) {
+        return <p>Error: {error.data || error.message}</p> // error.data là lỗi từ react-router-dom (chuyển trang, ko có trang), error.message là lỗi từ API (fetching data)
+    }
+}
+```
+- Trong `App.js` sử dụng thuộc tính `errorElement` để hiển thị component khi có lỗi
+>App.js
+```jsx
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Error from './Error';
+const router = createBrowserRouter([
+    {
+        path: '/',
+        element: <Home />,
+        errorElement: <Error />
+    }
+])
+```
