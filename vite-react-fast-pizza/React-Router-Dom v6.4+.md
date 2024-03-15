@@ -96,3 +96,25 @@ function Home() {
     )
 }
 ```
+
+## 1.4. Sử dụng `useNavigation` để kiểm tra trạng thái web đã chuyển trang chưa (!Không phải `useNavigate`)
+- Có 2 trạng thái của useNavigate:
+    * `useNavigation().state = 'loading'`: Đang chuyển trang
+    * `useNavigation().state = 'idle'`: Đã chuyển trang xong
+> Như vậy, có thể sử dụng `useNavigation().state` để kiểm tra trạng thái web đã chuyển trang xong chưa, nếu chưa thì hiển thị loading, nếu rồi thì hiển thị nội dung (phù hợp với việc fetching data từ API)
+
+>Home.js
+```jsx
+import { useNavigation } from 'react-router-dom';
+function Home() {
+    const navigation = useNavigation();
+    if (navigation.state === 'loading') {
+        return <p>Loading...</p>
+    }
+    return (
+        <div>
+            <h1>Home</h1>
+        </div>
+    )
+}
+```
