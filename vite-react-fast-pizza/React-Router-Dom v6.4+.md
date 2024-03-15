@@ -79,6 +79,8 @@ const router = createBrowserRouter([
         path: '/',
         element: <Home />,
         loader: fetchUser
+        // Sử dụng loader để fetch data từ API và trả về data cho component này
+        // hàm fetchUser sẽ nhận tự động nhận object chứa các properties từ route ({params}), nếu route có params thì fetchUser sẽ nhận params
     }
 ])
 ```
