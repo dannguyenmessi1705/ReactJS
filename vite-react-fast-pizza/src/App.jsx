@@ -7,7 +7,7 @@ import CreateOrder from "./features/order/CreateOrder";
 import AppLayout from "./ui/AppLayout";
 import Error from "./ui/Error";
 
-import { menuLoader, orderLoader } from "./services/fetchData"; // Import menuLoader từ fetchData.js để fetch data từ API
+import { actionCreateOrder, menuLoader, orderLoader } from "./services/fetchData"; // Import menuLoader từ fetchData.js để fetch data từ API
 
 // Tạo router với các route tương ứng với các component, dùng createBrowserRouter để có thể làm việc với Data Fetching (BrowserRouter thì không thể làm việc với Data Fetching
 const router = createBrowserRouter([
@@ -33,6 +33,8 @@ const router = createBrowserRouter([
       {
         path: "/order/new", // Route này sẽ render component CreateOrder "/order/new"
         element: <CreateOrder />,
+        action: actionCreateOrder, // Sử dụng action để thực hiện các method như POST, PUT, DELETE, PATCH từ thẻ <Form /> từ "react-router-dom" của component CreateOrder
+        // actionOrder sẽ nhận tự động nhận { request } từ route, request sẽ chứa các thông tin từ thẻ <Form />, => request.formData và truyền vào Object.fromEntries() sẽ chứa thông tin từ thẻ <Form />
       },
       {
         path: "/order/:orderId", // Route này sẽ render component Order "/order/:orderId"

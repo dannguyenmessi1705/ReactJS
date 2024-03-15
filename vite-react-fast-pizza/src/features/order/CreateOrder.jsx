@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { Form, useActionData, useNavigation } from "react-router-dom"; // Import Form, useActionData từ "react-router-dom" để sử dụng trong component CreateOrder
+// Form sẽ tạo ra một form với các method như POST, PUT, DELETE, PATCH, trừ GET,
+// useActionData sẽ lấy dữ liệu từ action của route
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str) =>
@@ -33,12 +36,16 @@ const fakeCart = [
 function CreateOrder() {
   // const [withPriority, setWithPriority] = useState(false);
   const cart = fakeCart;
+  const error = useActionData(); // Lấy dữ liệu từ action của route nếu có 
+  const navigation = useNavigation(); // Sử dụng useNavigation để kiểm tra trạng thái của route
+  console.log(navigation)
+  const isSubmitting = navigation.action === "submitting"; // Kiểm tra xem route có đang submit dữ liệu không
 
   return (
     <div>
       <h2>Ready to order? Let's go!</h2>
 
-      <form>
+      <Form method="POST"> {/* Tạo form với method là POST */}
         <div>
           <label>First Name</label>
           <input type="text" name="customer" required />
@@ -49,6 +56,7 @@ function CreateOrder() {
           <div>
             <input type="tel" name="phone" required />
           </div>
+          {error?.phone && <div>{error.phone}</div>}
         </div>
 
         <div>
@@ -68,11 +76,12 @@ function CreateOrder() {
           />
           <label htmlFor="priority">Want to yo give your order priority?</label>
         </div>
+        <input type="hidden" name="cart" value={JSON.stringify(cart)} /> {/* Tạo input hidden để chứa giỏ hàng, cần chuyển thành chuỗi JSON */}
 
         <div>
-          <button>Order now</button>
+          <button disabled={isSubmitting}>{isSubmitting ? "Wait" : "Order now" }</button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }

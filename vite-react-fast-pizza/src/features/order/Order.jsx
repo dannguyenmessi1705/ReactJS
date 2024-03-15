@@ -7,8 +7,7 @@ import {
 } from "../../utils/helpers";
 
 function Order() {
-  const order = useLoaderData();
-  console.log(order)
+  const order = useLoaderData(); // Lấy dữ liệu từ loader của route
   // Everyone can search for all orders, so for privacy reasons we're gonna gonna exclude names or address, these are only for the restaurant staff
   const {
     id,

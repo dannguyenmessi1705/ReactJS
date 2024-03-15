@@ -100,9 +100,10 @@ function Home() {
 ```
 
 ## 1.4. Sử dụng `useNavigation` để kiểm tra trạng thái web đã chuyển trang chưa (!Không phải `useNavigate`)
-- Có 2 trạng thái của useNavigate:
+- Các trạng thái của useNavigate:
     * `useNavigation().state = 'loading'`: Đang chuyển trang
     * `useNavigation().state = 'idle'`: Đã chuyển trang xong
+    * `useNavigation().state = 'submitting'`: Đang submit form từ `action` của `createBrowserRouter`
 > Như vậy, có thể sử dụng `useNavigation().state` để kiểm tra trạng thái web đã chuyển trang xong chưa, nếu chưa thì hiển thị loading, nếu rồi thì hiển thị nội dung (phù hợp với việc fetching data từ API)
 
 >Home.js
@@ -145,4 +146,46 @@ const router = createBrowserRouter([
         errorElement: <Error />
     }
 ])
+```
+
+## 1.6. Sử dụng Form trong react-router-dom
+- Form trong react-router-dom sẽ không cần phải sử dụng `e.preventDefault()` để ngăn chặn sự kiện mặc định của form
+- Chỉ có `createBrowserRouter` mới có thể sử dụng `form` trong `react-router-dom`, không thể sử dụng form trong `BrowserRouter`
+- `Form` trong `react-router-dom` sẽ chỉ hoạt động với method `POST`, `PUT`, `DELETE`, `PATCH`, không hoạt động với method `GET`
+- Sử dụng `form` trong `react-router-dom` để submit thì trong `createBrowserRouter` sẽ có 1 thuộc tính là `action` để xử lý sự kiện submit của form, `action` sẽ trả về cho function 1 object {request}. Nhiệm vụ của function là xử lý dữ liệu từ form và trả về kết quả
+>function.js
+```js
+async function submitForm({request}) {
+    const formData = await request.formData();
+    const data = Object.fromEntries(formData);
+    // Xử lý dữ liệu từ form
+    .....
+}
+```
+>App.js
+```jsx
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import submitForm from './submitForm';
+const router = createBrowserRouter([
+    {
+        path: '/',
+        element: <Home />,
+        action: submitForm
+    }
+])
+```
+
+- Ngoài ra, trong `react-router-dom` còn có module `useActionData` để trả về kết quả từ `action` của `createBrowserRouter`
+>Home.js
+```jsx
+import { useActionData } from 'react-router-dom';
+function Home() {
+    const data = useActionData();
+    return (
+        <div>
+            <h1>Home</h1>
+            <p>{data.message}</p>
+        </div>
+    )
+}
 ```
