@@ -9,9 +9,6 @@ function AppLayout() {
     <div className="layout">
       {isLoading && <Loading />}
       <Header />
-      <main>
-        <p>App Layout</p>
-      </main>
       <Outlet /> {/* Outlet sẽ render component tương ứng với route */}
       <CartOverview />
     </div>

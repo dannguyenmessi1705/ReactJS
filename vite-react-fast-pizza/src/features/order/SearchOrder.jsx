@@ -13,7 +13,7 @@ function SearchOrder() {
   return (
     <form onSubmit={handleSubmit}>
       <input
-        placeholder="Serch Order #"
+        placeholder="Search Order #"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       ></input>
