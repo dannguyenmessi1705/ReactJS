@@ -39,3 +39,22 @@ module.exports = {
   plugins: ['prettier-plugin-tailwindcss'],
 }
 ```
+
+# 3. Sử dụng Tailwind CSS trong React
+## 3.1 Responsive design
+- Mặc định các style sẽ được áp dụng cho màn hình mobile, để tùy chỉnh style cho các màn hình khác nhau, bạn có thể sử dụng các class CSS có tiền tố `sm:`, `md:`, `lg:`, `xl:`, `2xl:` để tùy chỉnh style cho các màn hình có kích thước khác nhau.
+- Nếu không sử dụng responsive design, style sẽ đưoc áp dụng cho tất cả các màn hình. Nếu dùng thì style ban đầu sẽ được áp dụng cho màn hình ban đầu đến màn hình đang được tùy chỉnh, style đang được tùy chỉnh sẽ được áp dụng từ màn hình mơi đó đến màn hình lớn nhất.
+- Lưu ý cần phải thiết lập style cho màn hình mobile trước, sau đó mới tùy chỉnh style cho các màn hình khác nhau.
+- Ví dụ:
+```jsx
+<div className="bg-blue-500 sm:bg-red-500 md:bg-green-500 lg:bg-yellow-500 xl:bg-pink-500 2xl:bg-purple-500">
+  Tailwind CSS
+</div>
+```
+- Trong ví dụ trên, màu nền của `div` sẽ thay đổi tùy theo kích thước màn hình.
+  * Màn hình mobile: màu nền là màu xanh dương.
+  * Màn hình tablet: màu nền là màu đỏ.
+  * Màn hình laptop: màu nền là màu xanh lá cây.
+  * Màn hình desktop: màu nền là màu vàng.
+  * Màn hình lớn hơn desktop: màu nền là màu hồng.
+  * Màn hình lớn hơn desktop: màu nền là màu tím.
