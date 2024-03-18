@@ -12,7 +12,7 @@ function AppLayout() {
       {isLoading && <Loading />}
       <Header />
       <div className="overflow-scroll">
-        <main className=" mx-auto max-w-3xl ">
+        <main className="">
           <Outlet /> {/* Outlet sẽ render component tương ứng với route */}
         </main>
       </div>
