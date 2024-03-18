@@ -76,3 +76,31 @@ module.exports = {
 ```jsx
 <button className="btn">Button</button>
 ```
+## 3.3 Ngoài ra để tái sử dụng cũng như mở rộng Tailwind CSS => config `tailwind.config.js`
+```javascript
+module.exports = {
+  content: [
+    './index.html', // Nơi chứa file index.html
+    './src/**/*.{js,jsx,ts,tsx}', // Nơi chứa source code React
+  ],
+  theme: {
+    fontFamily: {
+      sans: ['Inter', 'sans-serif'],
+    }, // Nếu ghi ở ngoài thì mặc định nó sẽ ghi đè lên font-family mặc định của Tailwind CSS
+    extend: {
+      colors: {
+        do: '#ff0000',
+        xanh: '#00ff00',
+      },
+      fontSize: {
+        '10xl': '10rem',
+      },
+      height: {
+        sceen: '100dvh', // dvh dynamic view height là 100% chiều cao của màn hình, khác với 100vh là 100% chiều cao của viewport
+      },
+    }, // Nếu ghi ở trong thì nó sẽ mở rộng thêm style  mà không ghi đè lên style mặc định của Tailwind 
+    // VD: text-xanh-500 sẽ có màu xanh, text-do-500 sẽ có màu đỏ, text-10xl sẽ có kích thước font-size là 10rem, h-screen sẽ có chiều cao là 100% chiều cao của màn hình
+  },
+  plugins: [],
+}
+```
