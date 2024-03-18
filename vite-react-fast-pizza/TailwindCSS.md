@@ -58,3 +58,21 @@ module.exports = {
   * Màn hình desktop: màu nền là màu vàng.
   * Màn hình lớn hơn desktop: màu nền là màu hồng.
   * Màn hình lớn hơn desktop: màu nền là màu tím.
+
+## 3.2 Sử dụng lại các class CSS trong Tailwind CSS nhờ `@apply`
+- Bạn có thể sử dụng lại các class CSS trong Tailwind CSS nhờ `@apply`
+- Ở file `./src/index.css`, thêm `@layer components` để sử dụng `@apply`:
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer components {
+  .btn {
+    @apply px-4 py-2 bg-blue-500 text-white rounded-md;
+  }
+}
+```
+- Ở các component khác có thể sử dụng lại class CSS `btn`:
+```jsx
+<button className="btn">Button</button>
+```
