@@ -80,7 +80,7 @@ function CreateOrder() {
         <input type="hidden" name="cart" value={JSON.stringify(cart)} />{" "}
         {/* Tạo input hidden để chứa giỏ hàng, cần chuyển thành chuỗi JSON */}
         <div>
-          <Button disable={isSubmitting}>
+          <Button disable={isSubmitting} type="primary">
             {isSubmitting ? "Wait" : "Order now"}
           </Button>
         </div>
