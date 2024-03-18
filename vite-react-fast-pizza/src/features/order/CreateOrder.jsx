@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Form, useActionData, useNavigation } from "react-router-dom"; // Import Form, useActionData từ "react-router-dom" để sử dụng trong component CreateOrder
+import Button from "../../ui/Button";
 // Form sẽ tạo ra một form với các method như POST, PUT, DELETE, PATCH, trừ GET,
 // useActionData sẽ lấy dữ liệu từ action của route
 
@@ -79,12 +80,9 @@ function CreateOrder() {
         <input type="hidden" name="cart" value={JSON.stringify(cart)} />{" "}
         {/* Tạo input hidden để chứa giỏ hàng, cần chuyển thành chuỗi JSON */}
         <div>
-          <button
-            disabled={isSubmitting}
-            className="inline-block rounded-full bg-yellow-400 px-4 py-3 font-semibold uppercase tracking-wide text-stone-800 transition-colors duration-300 hover:bg-yellow-300 focus:bg-yellow-300 focus:outline-none focus:ring focus:ring-yellow-300 focus:ring-offset-2 disabled:cursor-not-allowed"
-          >
+          <Button disable={isSubmitting}>
             {isSubmitting ? "Wait" : "Order now"}
-          </button>
+          </Button>
         </div>
       </Form>
     </div>
