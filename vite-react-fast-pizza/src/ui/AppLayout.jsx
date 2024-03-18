@@ -9,7 +9,7 @@ function AppLayout() {
     <div className="grid h-screen grid-rows-[auto_1fr_auto]">
       {" "}
       {/* Thêm class grid để sử dụng grid layout grid-rows-[auto_1fr_auto] có nghĩa là 3 hàng, hàng 1 và 3 có chiều cao tự động, hàng 2 chiếm phần còn lại */}
-      {isLoading && <Loading />}
+      {true && <Loading />}
       <Header />
       <div className="overflow-scroll">
         <main className="">
