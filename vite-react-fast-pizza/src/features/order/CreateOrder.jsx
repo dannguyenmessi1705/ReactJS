@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Form, useActionData, useNavigation } from "react-router-dom"; // Import Form, useActionData từ "react-router-dom" để sử dụng trong component CreateOrder
 import Button from "../../ui/Button";
+import { useSelector } from "react-redux";
 // Form sẽ tạo ra một form với các method như POST, PUT, DELETE, PATCH, trừ GET,
 // useActionData sẽ lấy dữ liệu từ action của route
 
@@ -35,6 +36,7 @@ const fakeCart = [
 ];
 
 function CreateOrder() {
+  const { username } = useSelector((store) => store.user);
   // const [withPriority, setWithPriority] = useState(false);
   const cart = fakeCart;
   const error = useActionData(); // Lấy dữ liệu từ action của route nếu có
@@ -55,6 +57,7 @@ function CreateOrder() {
             type="text"
             name="customer"
             required
+            defaultValue={username}
             className="input w-full"
           />
         </div>
