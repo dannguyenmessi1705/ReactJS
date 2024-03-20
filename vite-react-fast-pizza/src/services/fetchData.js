@@ -1,8 +1,10 @@
 import { redirect } from "react-router-dom";
 import { getMenu, getOrder, createOrder } from "./apiRestaurant";
+import { clearCart } from "../features/cart/cartSlice";
+import store from "../store";
 const isValidPhone = (str) =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
-    str
+    str,
   ); // Tạo hàm isValidPhone để kiểm tra xem số điện thoại có hợp lệ không (có đúng định dạng không)
 export async function menuLoader() {
   const menu = await getMenu();
@@ -34,5 +36,6 @@ export async function actionCreateOrder({ request }) {
   };
 
   const newOrder = await createOrder(order); // Tạo order mới bằng call API createOrder
+  store.dispatch(clearCart()); // Sau khi tạo đơn order thì xóa cart
   return redirect(`/order/${newOrder.id}`); // Sau khi tạo order mới thì redirect đến route "/order/:orderId"
 } // Tạo hàm actionCreateOrder để POST dữ liệu từ thẻ <Form /> của component CreateOrder, sau
