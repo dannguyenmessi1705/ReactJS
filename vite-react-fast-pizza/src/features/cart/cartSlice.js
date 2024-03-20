@@ -24,7 +24,7 @@ const cartSlice = createSlice({
     },
     deleteItem(state, action) {
       // payload = pizzaId
-      state.cart.filter((pizza) => pizza.pizzaId !== action.payload);
+      state.cart = state.cart.filter((pizza) => pizza.pizzaId !== action.payload);
     },
     increaseItem(state, action) {
       // payload = pizzaId
