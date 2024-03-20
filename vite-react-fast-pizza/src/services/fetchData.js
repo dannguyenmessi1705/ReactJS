@@ -30,7 +30,7 @@ export async function actionCreateOrder({ request }) {
   const order = {
     ...data,
     cart: JSON.parse(data.cart), // Chuyển cart từ JSON sang String
-    priority: data.priority === "on", // Chuyển priority từ String sang Boolean
+    priority: data.priority === "true", // Chuyển priority từ String sang Boolean
   };
 
   const newOrder = await createOrder(order); // Tạo order mới bằng call API createOrder
