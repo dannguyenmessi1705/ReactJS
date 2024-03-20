@@ -15,13 +15,20 @@ const isValidPhone = (str) =>
   );
 
 function CreateOrder() {
-  const { username } = useSelector((store) => store.user);
+  const {
+    username,
+    status,
+    position,
+    address,
+    error: errorAddress,
+  } = useSelector((store) => store.user);
   const [withPriority, setWithPriority] = useState(false);
   const cart = useSelector((store) => store.cart.cart);
   const error = useActionData(); // Lấy dữ liệu từ action của route nếu có
   const navigation = useNavigation(); // Sử dụng useNavigation để kiểm tra trạng thái của route
   const isSubmitting = navigation.action === "submitting"; // Kiểm tra xem route có đang submit dữ liệu không
   const dispatch = useDispatch();
+  const isLoadingAddress = status === "loading";
   const totalCartPrice = cart.reduce(
     (sum, item) => (sum += item.totalPrice),
     0,
@@ -34,8 +41,6 @@ function CreateOrder() {
   return (
     <div className="px-4 py-6">
       <h2 className="mb-8 text-xl font-semibold">Ready to order? Let's go!</h2>
-
-      <button onClick={() => dispatch(fetchAddress())}>Get Location</button>
 
       <Form method="POST">
         {" "}
@@ -61,16 +66,37 @@ function CreateOrder() {
             )}
           </div>
         </div>
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">Address</label>
           <div className="grow">
             <input
               type="text"
               name="address"
               required
+              disabled={isLoadingAddress}
+              defaultValue={address}
               className="input w-full"
             />
+            {status === "error" && (
+              <div className="mt-2 rounded-full bg-red-100 p-2 text-xs text-red-700">
+                {errorAddress}
+              </div>
+            )}
           </div>
+          {!position.latitude && !position.longtitude && (
+            <span className="absolute right-[3px] top-[3px] z-50 sm:right-[3px] sm:top-[3px]">
+              <Button
+                type="small"
+                disable={isLoadingAddress}
+                onClick={(e) => {
+                  e.preventDefault();
+                  dispatch(fetchAddress());
+                }}
+              >
+                Get Location
+              </Button>
+            </span>
+          )}
         </div>
         <div className="mb-12 flex items-center gap-5">
           <input
@@ -87,8 +113,10 @@ function CreateOrder() {
         </div>
         <input type="hidden" name="cart" value={JSON.stringify(cart)} />{" "}
         {/* Tạo input hidden để chứa giỏ hàng, cần chuyển thành chuỗi JSON */}
+        <input type="hidden" name="position" value={position.latitude && position.longtitude ? `${position.latitude}, ${position.longtitude}` : ""} />{" "}
+        {/* Tạo input hidden để chứa địa chỉ */}
         <div>
-          <Button disable={isSubmitting} type="primary">
+          <Button disable={isSubmitting || isLoadingAddress} type="primary">
             {isSubmitting ? "Wait" : `Order now ${formatCurrency(totalPrice)}`}
           </Button>
         </div>

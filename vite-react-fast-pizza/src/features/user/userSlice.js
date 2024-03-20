@@ -51,7 +51,7 @@ const userSlice = createSlice({
       }) // Xử lý trạng thái khi fetchAddress đã thành công
       .addCase(fetchAddress.rejected, (state, action) => {
         state.status = "error";
-        state.error = action.error.message;
+        state.error = "There was a problem getting address";
       }); // Xử lý trạng thái khi fetchAddress bị rejected
   }, // Thêm extraReducers để xử lý các hàm bât đồng bộ trong redux toolkit
 });
