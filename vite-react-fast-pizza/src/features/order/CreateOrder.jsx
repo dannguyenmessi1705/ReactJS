@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Form, useActionData, useNavigation } from "react-router-dom"; // Import Form, useActionData từ "react-router-dom" để sử dụng trong component CreateOrder
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { formatCurrency } from "../../utils/helpers";
 import Button from "../../ui/Button";
 import EmptyCart from "../cart/EmptyCart";
+import { fetchAddress } from "../user/userSlice";
 // Form sẽ tạo ra một form với các method như POST, PUT, DELETE, PATCH, trừ GET,
 // useActionData sẽ lấy dữ liệu từ action của route
 
@@ -20,6 +21,7 @@ function CreateOrder() {
   const error = useActionData(); // Lấy dữ liệu từ action của route nếu có
   const navigation = useNavigation(); // Sử dụng useNavigation để kiểm tra trạng thái của route
   const isSubmitting = navigation.action === "submitting"; // Kiểm tra xem route có đang submit dữ liệu không
+  const dispatch = useDispatch();
   const totalCartPrice = cart.reduce(
     (sum, item) => (sum += item.totalPrice),
     0,
@@ -32,6 +34,8 @@ function CreateOrder() {
   return (
     <div className="px-4 py-6">
       <h2 className="mb-8 text-xl font-semibold">Ready to order? Let's go!</h2>
+
+      <button onClick={() => dispatch(fetchAddress())}>Get Location</button>
 
       <Form method="POST">
         {" "}

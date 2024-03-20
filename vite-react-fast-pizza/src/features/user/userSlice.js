@@ -1,5 +1,5 @@
-/*
 import { getAddress } from "../../services/apiGeocoding";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 function getPosition() {
   return new Promise(function (resolve, reject) {
@@ -7,7 +7,7 @@ function getPosition() {
   });
 }
 
-async function fetchAddress() {
+export const fetchAddress = createAsyncThunk("user/fetchAddress", async () => {
   // 1) We get the user's geolocation position
   const positionObj = await getPosition();
   const position = {
@@ -20,13 +20,15 @@ async function fetchAddress() {
   const address = `${addressObj?.locality}, ${addressObj?.city} ${addressObj?.postcode}, ${addressObj?.countryName}`;
 
   // 3) Then we return an object with the data that we are interested in
-  return { position, address };
-}
-*/
+  return { position, address }; // Trả về 1 payload
+});
 
-import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   username: "",
+  status: "idle",
+  position: {},
+  address: "",
+  error: "",
 };
 
 const userSlice = createSlice({
@@ -37,6 +39,21 @@ const userSlice = createSlice({
       state.username = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchAddress.pending, (state, action) => {
+        state.status = "loading";
+      }) // Xử lý trạng thái khi fetchAddress đang pending
+      .addCase(fetchAddress.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.address = action.payload.address;
+        state.position = action.payload.position;
+      }) // Xử lý trạng thái khi fetchAddress đã thành công
+      .addCase(fetchAddress.rejected, (state, action) => {
+        state.status = "error";
+        state.error = action.error.message;
+      }); // Xử lý trạng thái khi fetchAddress bị rejected
+  }, // Thêm extraReducers để xử lý các hàm bât đồng bộ trong redux toolkit
 });
 
 export const { updateName } = userSlice.actions;
