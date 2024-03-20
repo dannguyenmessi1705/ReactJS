@@ -24,7 +24,9 @@ const cartSlice = createSlice({
     },
     deleteItem(state, action) {
       // payload = pizzaId
-      state.cart = state.cart.filter((pizza) => pizza.pizzaId !== action.payload);
+      state.cart = state.cart.filter(
+        (pizza) => pizza.pizzaId !== action.payload,
+      );
     },
     increaseItem(state, action) {
       // payload = pizzaId
@@ -41,6 +43,9 @@ const cartSlice = createSlice({
       );
       pizza.quantity--;
       pizza.totalPrice = pizza.quantity * pizza.unitPrice;
+      if (pizza.quantity === 0) {
+        cartSlice.caseReducers.deleteItem(state, action); // Gọi lại actions đã định nghĩa, nếu số lượng = 0 tương đương xóa item
+      }
     },
     clearCart(state) {
       state.cart = [];
