@@ -1,5 +1,5 @@
 import { redirect } from "react-router-dom";
-import { getMenu, getOrder, createOrder } from "./apiRestaurant";
+import { getMenu, getOrder, createOrder, updateOrder } from "./apiRestaurant";
 import { clearCart } from "../features/cart/cartSlice";
 import store from "../store";
 const isValidPhone = (str) =>
@@ -39,3 +39,9 @@ export async function actionCreateOrder({ request }) {
   store.dispatch(clearCart()); // Sau khi tạo đơn order thì xóa cart
   return redirect(`/order/${newOrder.id}`); // Sau khi tạo order mới thì redirect đến route "/order/:orderId"
 } // Tạo hàm actionCreateOrder để POST dữ liệu từ thẻ <Form /> của component CreateOrder, sau
+
+export async function actionUpdateOrder({ request, params }) {
+  const data = { priority: true };
+  await updateOrder(params.orderId, data);
+  return null;
+}
