@@ -1,5 +1,6 @@
 // Test ID: IIDSAT
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useFetcher } from "react-router-dom"; // Import useLoaderData, useFetcher từ react-router-dom để sử dụng Loader Data và Fetcher
+// Fetcher sẽ fetch data từ API, Loader Data sẽ lấy data từ Loader của route
 import {
   calcMinutesLeft,
   formatCurrency,
@@ -7,6 +8,7 @@ import {
 } from "../../utils/helpers";
 
 import OrderItem from "./OrderItem";
+import { useEffect } from "react";
 
 function Order() {
   const order = useLoaderData(); // Lấy dữ liệu từ loader của route
@@ -21,6 +23,10 @@ function Order() {
     cart,
   } = order;
   const deliveryIn = calcMinutesLeft(estimatedDelivery);
+  const fetcher = useFetcher(); // Sử dụng fetcher để fetch data từ API từ 1 component khác
+  useEffect(() => {
+    if (!fetcher.data && fetcher.state === "idle") fetcher.load("/menu"); // Nếu fetcher.data không có và fetcher.state là "idle" thì fetcher.load("/menu") để lấy API data từ "/menu" của component Menu
+  }, [fetcher]);
 
   return (
     <div className="space-y-8 px-4 py-6">
@@ -52,7 +58,15 @@ function Order() {
 
       <ul className="divide-y divide-stone-300 border-b border-t">
         {cart.map((item) => (
-          <OrderItem item={item} key={item.pizzaId} />
+          <OrderItem
+            item={item}
+            key={item.pizzaId}
+            isLoadingIngredients={fetcher.state === "loading"}
+            ingredients={
+              fetcher?.data?.find((pizza) => pizza.id === item.pizzaId)
+                ?.ingredients ?? []
+            }
+          />
         ))}
       </ul>
 
