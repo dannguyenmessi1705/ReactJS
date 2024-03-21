@@ -189,3 +189,56 @@ function Home() {
     )
 }
 ```
+
+## 1.7. Sử dụng useFetcher trong react-router-dom
+- Mục đích của `useFetcher` là để fetch data, update data từ API trong react-router-dom, mà không cần phải chuyển trang.
+- Ví dụ trong trang "/menu" có 1 API để lấy data, sang trang khác thay vì request lại API thì có thể sử dụng `useFetcher` để lấy data từ tranh "/menu" sang trang khác
+- Để thực hiện điều đó, ta phải dùng `createBrowserRouter` và trong thẻ element của component đó có chứa trang của Menu với thuộc tính là `loader` để fetch data từ API
+>Menu.js
+```jsx
+import { useState, useEffect } from 'react';
+export default function Menu() {
+....
+}
+export async function menuLoader() {
+  const menu = await getMenu();
+  return menu;
+} // Tạo hàm menuLoader để fetch data từ API, sau đó trả về menu
+```
+
+>App.js
+```jsx
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Menu, { menuLoader } from './Menu';
+const router = createBrowserRouter([
+    {
+        path: '/menu',
+        element: <Menu />,
+        loader: menuLoader
+    }
+])
+```
+
+- Sau đó, sử dụng `useFetcher` để lấy data từ API, ví dụ với trang `Order.js`
+>Order.js
+```jsx
+import { useFetcher } from 'react-router-dom';
+export default function Order() {
+    const fetcher = useFetcher();
+    useEffect(() => {
+        fetcher.load("/menu");
+    }, [])
+    const menu = fetcher.data;
+    return (
+        <div>
+            <h1>Order</h1>
+            <p>{menu.name}</p>
+        </div>
+        <fetcher.Form method='PATCH'>
+            <input type="text" name="name" />
+            <button type="submit">Submit</button>
+        </fetcher.Form> // Sử dụng fetcher.Form để submit form (cập nhật lại data)
+    )
+}
+```
+- Trong fetcher định nghĩa bởi useFetcher, có các thuộc tính là `fetcher.load(URL)` để lấy data API từ trang nào đó, sau đó sẽ lưu vào `fetcher.data`, `fetcher.Form` để submit form, `fetcher.state` để kiểm tra trạng thái của fetcher (loading, idle, submitting)
