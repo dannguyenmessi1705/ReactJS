@@ -1,14 +1,27 @@
-import styled from "styled-components"
+import styled from "styled-components";
+import GlobalStyles from "./styles/GlobalStyles";
+import Button from "./ui/Button";
+import Input from "./ui/Input";
 const H1 = styled.h1`
   font-size: 30px;
   font-weight: 600;
   background-color: yellow;
-  padding: 10px;
-`
+`;
+const StyledApp = styled.main`
+  background-color: orangered;
+  padding: 20px;
+`;
 function App() {
   return (
-      <H1>Wild Oasis</H1>
-  )
+    <>
+      <GlobalStyles />
+      <StyledApp>
+        <H1>Wild Oasis</H1>
+        <Button>Abc</Button>
+        <Input placeholder="Nhap"></Input>
+      </StyledApp>
+    </>
+  );
 }
 
-export default App
+export default App;

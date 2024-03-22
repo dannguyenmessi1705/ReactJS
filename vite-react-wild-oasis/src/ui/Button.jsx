@@ -18,7 +18,7 @@ const sizes = {
     padding: 1.2rem 2.4rem;
     font-weight: 500;
   `,
-};
+}; // định nghĩa các kích thước cho button
 
 const variations = {
   primary: css`
@@ -46,4 +46,27 @@ const variations = {
       background-color: var(--color-red-800);
     }
   `,
-};
+}; // định nghĩa các biến thể cho button
+
+const Button = styled.button`
+  font-size: 1.4rem;
+  padding: 1.2rem 1.6rem;
+  font-weight: 500;
+  border: none;
+  border-radius: var(
+    --border-radius-sm
+  ); // Các giá trị đã được định nghĩa ở GlobalStyles
+  background-color: var(
+    --color-brand-600
+  ); // Các giá trị đã được định nghĩa ở GlobalStyles
+  color: var(--color-brand-50); // Các giá trị đã được định nghĩa ở GlobalStyles
+  box-shadow: var(--shadow-sm); // Các giá trị đã được định nghĩa ở GlobalStyles
+  cursor: pointer;
+  &:hover {
+    background-color: var(
+      --color-brand-700
+    ); // Các giá trị đã được định nghĩa ở GlobalStyles
+  } // Tạo hiệu ứng hover cho button (&:hover là một pseudo-class selector trong CSS == button:hover)
+`;
+
+export default Button;

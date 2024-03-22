@@ -25,3 +25,27 @@ return (
 ```
 - Styled Component sẽ nhận vào một thẻ HTML và trả về một thẻ HTML đã được styled. Và đặc biệt nó có thể nhận vào một Styled Component khác để tạo ra một Styled Component mới.
 - Ngoài ra vì là 1 component nên có thể truyền vào các props như một component bình thường.
+
+### 3.2. Sử dụng createGlobalStyle để tạo global style cho toàn bộ ứng dụng
+- Để tạo global style cho toàn bộ ứng dụng, chúng ta sử dụng `createGlobalStyle` của thư viện Styled Component. Ví dụ:
+> styles/GlobalStyle.js
+```jsx
+import { createGlobalStyle } from 'styled-components';
+const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: #f0f0f0;
+  }
+`
+export default GlobalStyle;
+```
+> App.js
+```jsx
+import GlobalStyle from './styles/GlobalStyle';
+return (
+  <>
+    <GlobalStyle />
+    <h1>Hello Styled Component</h1>
+  </>
+)
+```
+- Lưu ý component `GlobalStyle` phải được đặt ở trên các component khác để style của nó được áp dụng trước. Và nó không nhận vào props cũng như children.
