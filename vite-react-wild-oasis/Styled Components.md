@@ -49,3 +49,46 @@ return (
 )
 ```
 - Lưu ý component `GlobalStyle` phải được đặt ở trên các component khác để style của nó được áp dụng trước. Và nó không nhận vào props cũng như children.
+
+### 3.3. Sử dụng props và css trong Styled Component
+- Chúng ta có thể sử dụng props và css trong Styled Component để tạo ra các style linh hoạt. Ví dụ:
+> Heading.js
+```jsx
+import styled, {css} from 'styled-components';
+const h1 = css`
+  font-size: 3rem;
+  font-weight: 600;
+`; // định nghĩa các kiểu cho h1
+
+const h2 = css`
+    font-size: 2rem;
+    font-weight: 600;
+`; // định nghĩa các kiểu cho h2
+
+const h3 = css`
+    font-size: 2rem;
+    font-weight: 500;
+`; // định nghĩa các kiểu cho h3
+
+
+const Heading = styled.h1`
+    line-height: 1.4;
+    ${(props) => props.as === "h1" && h1} // nếu props.as === "h1" thì sẽ áp dụng css của h1
+    ${(props) => props.as === "h2" && h2} // nếu props.as === "h2" thì sẽ áp dụng css của h2
+    ${(props) => props.as === "h3" && h3} // nếu props.as === "h3" thì sẽ áp dụng css của h3
+`;
+
+export default Heading;
+```
+> App.js
+```jsx
+import Heading from './Heading';
+return (
+  <>
+    <Heading as="h1">Hello Styled Component</Heading> {/* sử dụng Heading với props as="h1" sẽ trả về 1 element html h1 */}
+    <Heading as="h2">Hello Styled Component</Heading> {/* sử dụng Heading với props as="h2" sẽ trả về 1 element html h2 */}
+    <Heading as="h3">Hello Styled Component</Heading> {/* sử dụng Heading với props as="h3" sẽ trả về 1 element html h3 */}
+  </>
+)
+```
+
