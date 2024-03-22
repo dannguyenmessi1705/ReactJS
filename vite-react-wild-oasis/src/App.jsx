@@ -1,8 +1,13 @@
+import styled from "styled-components"
+const H1 = styled.h1`
+  font-size: 30px;
+  font-weight: 600;
+  background-color: yellow;
+  padding: 10px;
+`
 function App() {
   return (
-    <div>
-      <h1>Wild Oasis</h1>
-    </div>
+      <H1>Wild Oasis</H1>
   )
 }
 
