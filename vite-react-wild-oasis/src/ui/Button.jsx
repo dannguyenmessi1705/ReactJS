@@ -49,24 +49,24 @@ const variations = {
 }; // định nghĩa các biến thể cho button
 
 const Button = styled.button`
-  font-size: 1.4rem;
-  padding: 1.2rem 1.6rem;
-  font-weight: 500;
   border: none;
   border-radius: var(
     --border-radius-sm
   ); // Các giá trị đã được định nghĩa ở GlobalStyles
-  background-color: var(
-    --color-brand-600
-  ); // Các giá trị đã được định nghĩa ở GlobalStyles
-  color: var(--color-brand-50); // Các giá trị đã được định nghĩa ở GlobalStyles
   box-shadow: var(--shadow-sm); // Các giá trị đã được định nghĩa ở GlobalStyles
-  cursor: pointer;
-  &:hover {
-    background-color: var(
-      --color-brand-700
-    ); // Các giá trị đã được định nghĩa ở GlobalStyles
-  } // Tạo hiệu ứng hover cho button (&:hover là một pseudo-class selector trong CSS == button:hover)
+  ${(props) =>
+    sizes[
+      props.size
+    ]} // nếu props.sizes === "small" thì sẽ áp dụng css của small và tương tự với các kích thước khác
+  ${(props) =>
+    variations[
+      props.variation
+    ]} // nếu props.variation === "primary" thì sẽ áp dụng css của primary, và tương tự với các biến thể khác
 `;
+
+Button.defaultProps = {
+  size: "medium",
+  variation: "primary",
+};
 
 export default Button;

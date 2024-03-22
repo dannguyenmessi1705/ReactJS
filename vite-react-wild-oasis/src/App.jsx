@@ -3,6 +3,7 @@ import GlobalStyles from "./styles/GlobalStyles";
 import Button from "./ui/Button";
 import Input from "./ui/Input";
 import Heading from "./ui/Heading";
+import Row from "./ui/Row";
 
 const StyledApp = styled.main`
   background-color: orangered;
@@ -13,11 +14,23 @@ function App() {
     <>
       <GlobalStyles />
       <StyledApp>
-        <Heading as='h1'>Wild Oasis</Heading>
-        <Heading as='h2'>Check</Heading>
-        <Button>Abc</Button>
-        <Heading as='h3'>Form</Heading>
-        <Input placeholder="Nhap"></Input>
+        <Row>
+          <Row type="horizontal">
+            <Heading as="h1"> The Wild Oasis</Heading>
+            <div>
+              <Heading as="h2">Check in and out</Heading>
+              <Button size="medium" variation="primary">Check in</Button>
+              <Button size="medium" variation="secondary">Check out</Button>
+            </div>
+          </Row>
+          <Row>
+            <Heading as="h3">Form</Heading>
+            <form>
+              <Input placeholder="Nhap"></Input>
+              <Input placeholder="Nhap"></Input>
+            </form>
+          </Row>
+        </Row>
       </StyledApp>
     </>
   );
