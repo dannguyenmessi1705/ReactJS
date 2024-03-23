@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; // Nh�
 // QueryClientProvider: là một component React dùng để cung cấp một instance của QueryClient cho tất cả các component con của nó. Nó sẽ tự động quản lý vòng đời của query client và tự động xóa nó khi không cần thiết nữa.
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 // ReactQueryDevtools: là một component React dùng để hiển thị một bảng điều khiển DevTools để giúp bạn theo dõi và gỡ lỗi các query trong ứng dụng của bạn.
+import { Toaster } from "react-hot-toast";
+// Toaster: là một component React dùng để hiển thị thông báo toast thông qua thư viện react-hot-toast
 
 import Dashboard from "./pages/Dashboard";
 import Bookings from "./pages/Bookings";
@@ -47,6 +49,26 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <Toaster
+        position="top-center"
+        gutter={12}
+        containerStyle={{ margin: "8px" }}
+        toastOptions={{
+          success: {
+            duration: 3000,
+          },
+          error: {
+            duration: 5000,
+          },
+          style: {
+            fontSize: "16px",
+            maxWidth: "500px",
+            padding: "16px 24px",
+            backgroundColor: "var(--color-grey-0)",
+            color: "var(--color-grey-700)",
+          },
+        }}
+      />
     </QueryClientProvider>
   );
 }

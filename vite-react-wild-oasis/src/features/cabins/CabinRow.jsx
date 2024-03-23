@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { formatCurrency } from "../../utils/helpers.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteCabin } from "../../services/apiCabins.js";
+import toast from "react-hot-toast"; // Nhập toast để sử dụng, lưu ý đã khai báo component <Toaster /> ở component cha
 
 const TableRow = styled.div`
   display: grid;
@@ -56,13 +57,13 @@ function CabinRow({ cabin }) {
     // Lấy ra isPending và mutate(function) từ hook useMutation để xử lý việc xóa cabin
     mutationFn: deleteCabin, // Hàm xóa cabin
     onSuccess: () => {
-      alert("Delete successfully");
+      toast.success("Delete successfully");
       queryClient.invalidateQueries({
         queryKey: ["cabins"],
       });
     }, // Khi xóa thành công, thông báo và sử dụng queryClient để gọi hàm invalidateQueries nhằm báo cho react-query biết rằng dữ liệu đã bị thay đổi và cần phải fetch lại
     onError: (err) => {
-      alert(err.message);
+      toast.error(err.message);
     }, // Khi xóa thất bại, thông báo lỗi
   }); // Tạo một mutation để xóa cabin, lưu ý mutate là một function
 
