@@ -66,3 +66,30 @@ const { isLoading, isError, data, error } = useQuery(
     }
 );
 ```
+
+### 3.4. Sử dụng `useMutation` để mutate dữ liệu (thay đổi dữ liệu) trên server
+- `useMutation` nhận tham số `mutationFn` là một hàm trả về dữ liệu sau khi mutate.
+- `useMutation` trả về một object chứa các trạng thái của mutation như `isPending`, `isError`, `isSuccess`, và đặc biệt là `mutate` là 1 function callback để thực hiện mutation.
+```jsx
+import { useMutation } from '@tanstack/react-query';
+const queryClient = useQueryClient(); // Hook để lấy ra queryClient đã được khởi tạo ở trên
+const { mutate, isPending, isError, isSuccess } = useMutation(
+    mutationFn: async (id) => { // Hàm trả về dữ liệu sau khi mutate
+        const response = await fetch('https://jsonplaceholder.typicode.com/todos', {
+            method: 'DELETE',
+        });
+        return response.json();
+    } // Hàm mutate sẽ nhận vào các tham số cần thiết để thực hiện mutationFn, VD mutate(id)
+    onSuccess: () => {
+        queryClient.invalidateQueries({
+            queryKey: ['todos'], // Sau khi mutate thành công, chúng ta cần phải invalidate query để báo cho React Query fetch lại dữ liệu mới
+        }); 
+    }
+    onError: (error) => {
+        console.log(error);
+    } // Xử lý khi có lỗi xảy ra
+);
+return (
+    <button onClick={() => mutate(id)}>Delete</button> // Gọi hàm mutate để thực hiện mutation
+)
+```
