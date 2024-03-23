@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useForm } from "react-hook-form"; // import hook form từ thư viện react-hook-form
 
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
@@ -43,36 +44,54 @@ const Error = styled.span`
 `;
 
 function CreateCabinForm() {
+  const { register, handleSubmit } = useForm(); // Lấy ra register và hàm handleSubmit từ hook form
+  /*
+    register: dùng để đăng ký các input, select, textarea để lấy dữ liệu từ form cho vào body request, register cũng có sẵn các rules để validate dữ liệu (onChange, name, value, ref, onBlur, ...)
+    handleSubmit: dùng để xử lý sự kiện submit của form, nó sẽ gọi hàm onSubmit mà chúng ta truyền vào với dữ liệu của form
+  */
+  const onSubmit = (data) => {
+    console.log(data);
+  };
   return (
-    <Form>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <FormRow>
         <Label htmlFor="name">Cabin name</Label>
-        <Input type="text" id="name" />
+        <Input type="text" id="name" {...register("name")} />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="maxCapacity">Maximum capacity</Label>
-        <Input type="number" id="maxCapacity" />
+        <Input type="number" id="maxCapacity" {...register("maxCapacity")} />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="regularPrice">Regular price</Label>
-        <Input type="number" id="regularPrice" />
+        <Input type="number" id="regularPrice" {...register("regularPrice")} />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="discount">Discount</Label>
-        <Input type="number" id="discount" defaultValue={0} />
+        <Input
+          type="number"
+          id="discount"
+          defaultValue={0}
+          {...register("discount")}
+        />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="description">Description for website</Label>
-        <Textarea type="number" id="description" defaultValue="" />
+        <Textarea
+          type="number"
+          id="description"
+          defaultValue=""
+          {...register("description")}
+        />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="image">Cabin photo</Label>
-        <FileInput id="image" accept="image/*" />
+        <FileInput id="image" accept="image/*" {...register("image")} />
       </FormRow>
 
       <FormRow>

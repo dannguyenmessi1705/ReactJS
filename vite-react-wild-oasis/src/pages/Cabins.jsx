@@ -1,8 +1,12 @@
 import Heading from "../ui/Heading";
 import Row from "../ui/Row";
 import CabinTable from "../features/cabins/CabinTable";
+import Button from "../ui/Button";
+import { useState } from "react";
+import CreateCabinForm from "../features/cabins/CreateCabinForm";
 
 function Cabins() {
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <>
@@ -12,6 +16,10 @@ function Cabins() {
       </Row>
       <Row>
         <CabinTable />
+        <Button onClick={() => setShowModal((showModal) => !showModal)}>
+          {`${showModal ? "Close Form" : "Add new Cabin"}`}
+        </Button>
+        {showModal && <CreateCabinForm />}
       </Row>
     </>
   );
