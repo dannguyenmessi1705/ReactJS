@@ -50,3 +50,19 @@ return (
   </QueryClientProvider>
 );
 ```
+
+### 3.3. Sử dụng `useQuery` để fetch dữ liệu từ server
+- `useQuery` nhận vào 2 tham số:
+    + `queryKey`: Là một mảng chứa các tham số cần thiết để fetch dữ liệu từ server.
+    + `queryFn`: Là một hàm trả về dữ liệu từ server.
+- `useQuery` trả về một object chứa các trạng thái của query như `isLoading`, `isError`, `isSuccess`, `data`, `error`, `refetch`, `fetchMore`, `cancel`, `reset`, `isFetching`, `isStale`, `failureCount`, `isIdle`, `isFetchingMore`, `isError`, `isSuccess`
+```jsx
+import { useQuery } from '@tanstack/react-query';
+const { isLoading, isError, data, error } = useQuery(
+    queryKey: ['todos'], // Mảng chứa các tham số cần thiết để fetch dữ liệu từ server
+    queryFn: async () => { // Hàm trả về dữ liệu từ server
+        const response = await fetch('https://jsonplaceholder.typicode.com/todos');
+        return response.json();
+    }
+);
+```
