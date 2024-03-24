@@ -31,6 +31,7 @@ export async function deleteCabin(id) {
 export async function createCabin(cabin, id) {
   let imageName = null;
   let imagePath = null;
+  console.log(cabin, id)
   const isNewImage = cabin.image[0] instanceof File; // Kiểm tra xem ảnh mới hay cũ
   if (isNewImage) {
     imageName = (Date.now().toString() + "-" + cabin.image[0].name).replaceAll(
@@ -46,7 +47,7 @@ export async function createCabin(cabin, id) {
     const { data, errorEdit } = await supabase
       .from("cabins")
       .update({ ...cabin, image: imagePath })
-      .eq("id", cabin.id)
+      .eq("id", id)
       .select();
     if (errorEdit) {
       console.error(errorEdit);

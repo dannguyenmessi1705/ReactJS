@@ -65,7 +65,7 @@ function CreateCabinForm({ editCabin = {} }) {
         `${isEdit ? "Cabin edited successfully" : "Cabin created successfully"}`
       );
       queryClient.invalidateQueries("cabins"); // Invalidate cache của query "cabins" để load lại dữ liệu mới
-      reset(); // Reset lại form
+      !isEdit && reset(); // Reset lại form
     },
     onError: (err) => {
       // Hàm chạy khi có lỗi xảy ra
