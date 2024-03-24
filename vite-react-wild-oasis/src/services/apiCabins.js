@@ -10,21 +10,21 @@ export async function getCabin() {
 }
 
 export async function deleteCabin(id) {
-  const imagePath = (
-    await supabase.from("cabins").select("image").eq("id", id)
-  ).data[0].image.split("cabin-images/")[1]; // Lấy đường dẫn ảnh từ server để xóa ảnh trên server
+  // const imagePath = (
+  //   await supabase.from("cabins").select("image").eq("id", id)
+  // ).data[0].image.split("cabin-images/")[1]; // Lấy đường dẫn ảnh từ server để xóa ảnh trên server
   const { data, error } = await supabase.from("cabins").delete().eq("id", id); // Xóa cabin theo id
   if (error) {
     console.error(error);
     throw new Error("Couldn't deleted the cabin");
   }
-  const { error: errorStorage } = await supabase.storage
-    .from("cabin-images")
-    .remove([imagePath]); // Xóa ảnh trên server
-  if (errorStorage) {
-    console.error(errorStorage);
-    throw new Error("Couldn't deleted the image");
-  }
+  // const { error: errorStorage } = await supabase.storage
+  //   .from("cabin-images")
+  //   .remove([imagePath]); // Xóa ảnh trên server
+  // if (errorStorage) {
+  //   console.error(errorStorage);
+  //   throw new Error("Couldn't deleted the image");
+  // }
   return data;
 }
 
