@@ -47,7 +47,9 @@ const Error = styled.span`
 `;
 
 function CreateCabinForm() {
-  const { register, handleSubmit, reset } = useForm(); // Lấy ra register, hàm handleSubmit và hàm reset dữ liệu form từ hook form
+  // Lấy ra register, hàm handleSubmit, hàm reset dữ liệu form, hàm getValues để lấy giá trị từ body input và biến formSate để bắt lỗi từ từ hook form
+  const { register, handleSubmit, reset, getValues, formState } = useForm();
+  const { errors } = formState; // Lấy ra errors từ formState để hiển thị lỗi khi validate form
   const queryClient = useQueryClient(); // Lấy ra queryClient từ react-query để invalidate cache sau khi tạo cabin thành công
   const { isPending, mutate } = useMutation({
     // Lấy ra isPending và mutate từ hook useMutation để xử lý việc tạo cabin
@@ -74,17 +76,52 @@ function CreateCabinForm() {
     <Form onSubmit={handleSubmit(onSubmit)}>
       <FormRow>
         <Label htmlFor="name">Cabin name</Label>
-        <Input type="text" id="name" {...register("name")} />
+        <Input
+          type="text"
+          id="name"
+          disabled={isPending}
+          {...register("name", {
+            required: "Cabin name is required", // Bắt buộc nhập, nếu không nhập sẽ hiển thị thông báo lỗi này
+          })}
+        />
+        {errors?.name?.message && <Error>{errors.name.message}</Error>}{" "}
+        {/* Hiển thị thông báo lỗi nếu có */}
       </FormRow>
 
       <FormRow>
         <Label htmlFor="maxCapacity">Maximum capacity</Label>
-        <Input type="number" id="maxCapacity" {...register("maxCapacity")} />
+        <Input
+          type="number"
+          id="maxCapacity"
+          disabled={isPending}
+          {...register("maxCapacity", {
+            required: "Maximum capacity is required", // Bắt buộc nhập, nếu không nhập sẽ hiển thị thông báo lỗi này
+            min: {
+              value: 1, // Giá trị nhỏ nhất là 1
+              message: "Minimum capacity is 1", // Hiển thị thông báo lỗi khi giá trị nhỏ hơn 1
+            },
+          })}
+        />
+        {errors?.maxCapacity?.message && (
+          <Error>{errors.maxCapacity.message}</Error>
+        )}{" "}
+        {/* Hiển thị thông báo lỗi nếu có */}
       </FormRow>
 
       <FormRow>
         <Label htmlFor="regularPrice">Regular price</Label>
-        <Input type="number" id="regularPrice" {...register("regularPrice")} />
+        <Input
+          type="number"
+          id="regularPrice"
+          disabled={isPending}
+          {...register("regularPrice", {
+            required: "Regular price is required", // Bắt buộc nhập, nếu không nhập sẽ hiển thị thông báo lỗi này
+          })}
+        />
+        {errors?.regularPrice?.message && (
+          <Error>{errors.regularPrice.message}</Error>
+        )}{" "}
+        {/* Hiển thị thông báo lỗi nếu có */}
       </FormRow>
 
       <FormRow>
@@ -93,8 +130,16 @@ function CreateCabinForm() {
           type="number"
           id="discount"
           defaultValue={0}
-          {...register("discount")}
+          disabled={isPending}
+          {...register("discount", {
+            required: "Discount is required", // Bắt buộc nhập, nếu không nhập sẽ hiển thị thông báo lỗi này
+            validate: (value) =>
+              getValues("regularPrice") >= value ||
+              "Discount must be less than regular price", // Giảm giá phải nhỏ hơn giá gốc, nếu không sẽ hiển thị thông báo lỗi này
+          })}
         />
+        {errors?.discount?.message && <Error>{errors.discount.message}</Error>}{" "}
+        {/* Hiển thị thông báo lỗi nếu có */}
       </FormRow>
 
       <FormRow>
@@ -102,9 +147,16 @@ function CreateCabinForm() {
         <Textarea
           type="number"
           id="description"
+          disabled={isPending}
           defaultValue=""
-          {...register("description")}
+          {...register("description", {
+            required: "Description is required", // Bắt buộc nhập, nếu không nhập sẽ hiển thị thông báo lỗi này
+          })}
         />
+        {errors?.description?.message && (
+          <Error>{errors.description.message}</Error>
+        )}{" "}
+        {/* Hiển thị thông báo lỗi nếu có */}
       </FormRow>
 
       <FormRow>
