@@ -46,17 +46,24 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-function CreateCabinForm() {
+function CreateCabinForm({ editCabin = {} }) {
+  const { id: editId, ...editValue } = editCabin; // Lấy ra id và các giá trị cần edit từ editCabin
+  const isEdit = Boolean(editId); // Kiểm tra xem có phải edit hay không
+
   // Lấy ra register, hàm handleSubmit, hàm reset dữ liệu form, hàm getValues để lấy giá trị từ body input và biến formSate để bắt lỗi từ từ hook form
-  const { register, handleSubmit, reset, getValues, formState } = useForm();
+  const { register, handleSubmit, reset, getValues, formState } = useForm({
+    defaultValues: editValue, // Gán giá trị mặc định cho form từ editValue
+  });
   const { errors } = formState; // Lấy ra errors từ formState để hiển thị lỗi khi validate form
   const queryClient = useQueryClient(); // Lấy ra queryClient từ react-query để invalidate cache sau khi tạo cabin thành công
   const { isPending, mutate } = useMutation({
     // Lấy ra isPending và mutate từ hook useMutation để xử lý việc tạo cabin
-    mutationFn: createCabin, // Hàm tạo cabin
+    mutationFn: ({ data, id }) => createCabin(data, id), // Hàm tạo cabin, truyền vào Object data và id để tạo cabin (data, cabin)
     onSuccess: () => {
       // Hàm chạy khi tạo cabin thành công
-      toast.success("Cabin created successfully");
+      toast.success(
+        `${isEdit ? "Cabin edited successfully" : "Cabin created successfully"}`
+      );
       queryClient.invalidateQueries("cabins"); // Invalidate cache của query "cabins" để load lại dữ liệu mới
       reset(); // Reset lại form
     },
@@ -70,7 +77,7 @@ function CreateCabinForm() {
     handleSubmit: dùng để xử lý sự kiện submit của form, nó sẽ gọi hàm onSubmit mà chúng ta truyền vào với dữ liệu của form
   */
   const onSubmit = (data) => {
-    mutate(data); // Gọi hàm mutate để tạo cabin với dữ liệu data từ form, mutate sẽ gọi createCabin(data)
+    isEdit ? mutate({ data, id: editId }) : mutate({ data }); // Gọi hàm mutate để tạo cabin với dữ liệu data từ form, mutate sẽ gọi createCabin(data)
   };
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -159,19 +166,33 @@ function CreateCabinForm() {
         {/* Hiển thị thông báo lỗi nếu có */}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="image">Cabin photo</Label>
-        <FileInput
-          id="image"
-          accept="image/*"
-          type="file"
-          {...register("image", {
-            required: "Image is required", // Bắt buộc nhập, nếu không nhập sẽ hiển thị thông báo lỗi này
-          })}
-        />
-        {errors?.image?.message && <Error>{errors.image.message}</Error>}{" "}
-        {/* Hiển thị thông báo lỗi nếu có */}
-      </FormRow>
+      {isEdit ? (
+        <FormRow>
+          <Label htmlFor="image">Cabin photo</Label>
+          <FileInput
+            id="image"
+            accept="image/*"
+            type="file"
+            {...register("image")}
+          />
+          {errors?.image?.message && <Error>{errors.image.message}</Error>}{" "}
+          {/* Hiển thị thông báo lỗi nếu có */}
+        </FormRow>
+      ) : (
+        <FormRow>
+          <Label htmlFor="image">Cabin photo</Label>
+          <FileInput
+            id="image"
+            accept="image/*"
+            type="file"
+            {...register("image", {
+              required: "Image is required", // Bắt buộc nhập, nếu không nhập sẽ hiển thị thông báo lỗi này
+            })}
+          />
+          {errors?.image?.message && <Error>{errors.image.message}</Error>}{" "}
+          {/* Hiển thị thông báo lỗi nếu có */}
+        </FormRow>
+      )}
 
       <FormRow>
         {/* type is an HTML attribute! */}
@@ -179,7 +200,13 @@ function CreateCabinForm() {
           Cancel
         </Button>
         <Button disabled={isPending}>
-          {isPending ? "Creating..." : "Create Cabin"}
+          {isEdit
+            ? isPending
+              ? "Editing..."
+              : "Edit Cabin"
+            : isPending
+            ? "Creating..."
+            : "Create Cabin"}
         </Button>
       </FormRow>
     </Form>

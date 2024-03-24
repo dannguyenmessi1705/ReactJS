@@ -3,6 +3,8 @@ import { formatCurrency } from "../../utils/helpers.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteCabin } from "../../services/apiCabins.js";
 import toast from "react-hot-toast"; // Nhập toast để sử dụng, lưu ý đã khai báo component <Toaster /> ở component cha
+import { useState } from "react";
+import CreateCabinForm from "./CreateCabinForm.jsx";
 
 const TableRow = styled.div`
   display: grid;
@@ -44,6 +46,8 @@ const Discount = styled.div`
 `;
 
 function CabinRow({ cabin }) {
+  const [showForm, setShowForm] = useState(false); // Tạo state showForm để hiển thị form tạo cabin
+
   const {
     id: cabinId,
     image,
@@ -68,16 +72,27 @@ function CabinRow({ cabin }) {
   }); // Tạo một mutation để xóa cabin, lưu ý mutate là một function
 
   return (
-    <TableRow role="row">
-      <Img src={image} />
-      <Cabin>{name}</Cabin>
-      <div>Fits up to {maxCapacity} guests</div>
-      <Price>{formatCurrency(regularPrice)}</Price>
-      <Discount>{formatCurrency(discount)}</Discount>
-      <button onClick={() => mutate(cabinId)} disabled={isPending}>
-        {isPending ? "Deleting" : "Delete"}
-      </button>
-    </TableRow>
+    <>
+      <TableRow role="row">
+        <Img src={image} />
+        <Cabin>{name}</Cabin>
+        <div>Fits up to {maxCapacity} guests</div>
+        <Price>{formatCurrency(regularPrice)}</Price>
+        <Discount>{formatCurrency(discount)}</Discount>
+        <div>
+          <button
+            onClick={() => setShowForm((showForm) => !showForm)}
+            disabled={isPending}
+          >
+            {isPending ? "Editing" : "Edit"}
+          </button>
+          <button onClick={() => mutate(cabinId)} disabled={isPending}>
+            {isPending ? "Deleting" : "Delete"}
+          </button>
+        </div>
+      </TableRow>
+      {showForm && <CreateCabinForm editCabin={cabin} />}
+    </>
   );
 }
 
