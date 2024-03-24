@@ -134,7 +134,7 @@ function CreateCabinForm() {
           {...register("discount", {
             required: "Discount is required", // Bắt buộc nhập, nếu không nhập sẽ hiển thị thông báo lỗi này
             validate: (value) =>
-              getValues("regularPrice") >= value ||
+              Number(getValues("regularPrice")) >= Number(value) ||
               "Discount must be less than regular price", // Giảm giá phải nhỏ hơn giá gốc, nếu không sẽ hiển thị thông báo lỗi này
           })}
         />
@@ -161,7 +161,16 @@ function CreateCabinForm() {
 
       <FormRow>
         <Label htmlFor="image">Cabin photo</Label>
-        <FileInput id="image" accept="image/*" {...register("image")} />
+        <FileInput
+          id="image"
+          accept="image/*"
+          type="file"
+          {...register("image", {
+            required: "Image is required", // Bắt buộc nhập, nếu không nhập sẽ hiển thị thông báo lỗi này
+          })}
+        />
+        {errors?.image?.message && <Error>{errors.image.message}</Error>}{" "}
+        {/* Hiển thị thông báo lỗi nếu có */}
       </FormRow>
 
       <FormRow>
