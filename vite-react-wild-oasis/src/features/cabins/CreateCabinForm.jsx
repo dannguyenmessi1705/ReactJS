@@ -6,6 +6,9 @@ import Form from "../../ui/Form";
 import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createCabin } from "../../services/apiCabins";
+import toast from "react-hot-toast";
 
 const FormRow = styled.div`
   display: grid;
@@ -44,13 +47,28 @@ const Error = styled.span`
 `;
 
 function CreateCabinForm() {
-  const { register, handleSubmit } = useForm(); // Lấy ra register và hàm handleSubmit từ hook form
+  const { register, handleSubmit, reset } = useForm(); // Lấy ra register, hàm handleSubmit và hàm reset dữ liệu form từ hook form
+  const queryClient = useQueryClient(); // Lấy ra queryClient từ react-query để invalidate cache sau khi tạo cabin thành công
+  const { isPending, mutate } = useMutation({
+    // Lấy ra isPending và mutate từ hook useMutation để xử lý việc tạo cabin
+    mutationFn: createCabin, // Hàm tạo cabin
+    onSuccess: () => {
+      // Hàm chạy khi tạo cabin thành công
+      toast.success("Cabin created successfully");
+      queryClient.invalidateQueries("cabins"); // Invalidate cache của query "cabins" để load lại dữ liệu mới
+      reset(); // Reset lại form
+    },
+    onError: (err) => {
+      // Hàm chạy khi có lỗi xảy ra
+      toast.error("An error occurred: " + err.message); // Hiển thị thông báo lỗi
+    },
+  });
   /*
     register: dùng để đăng ký các input, select, textarea để lấy dữ liệu từ form cho vào body request, register cũng có sẵn các rules để validate dữ liệu (onChange, name, value, ref, onBlur, ...)
     handleSubmit: dùng để xử lý sự kiện submit của form, nó sẽ gọi hàm onSubmit mà chúng ta truyền vào với dữ liệu của form
   */
   const onSubmit = (data) => {
-    console.log(data);
+    mutate(data); // Gọi hàm mutate để tạo cabin với dữ liệu data từ form, mutate sẽ gọi createCabin(data)
   };
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -99,7 +117,9 @@ function CreateCabinForm() {
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button>Edit cabin</Button>
+        <Button disabled={isPending}>
+          {isPending ? "Creating..." : "Create Cabin"}
+        </Button>
       </FormRow>
     </Form>
   );

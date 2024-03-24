@@ -17,3 +17,15 @@ export async function deleteCabin(id) {
   }
   return data;
 }
+
+export async function createCabin(cabin) {
+  const { data, error } = await supabase
+    .from("cabins")
+    .insert([cabin]) // Insert dữ liệu vào bảng cabins
+    .select(); // Lấy dữ liệu sau khi insert
+  if (error) {
+    console.error(error);
+    throw new Error("Couldn't deleted the cabin");
+  }
+  return data;
+}
