@@ -52,13 +52,13 @@ function CreateCabinForm({ editCabin = {} }) {
 
   // Lấy ra register, hàm handleSubmit, hàm reset dữ liệu form, hàm getValues để lấy giá trị từ body input và biến formSate để bắt lỗi từ từ hook form
   const { register, handleSubmit, reset, getValues, formState } = useForm({
-    defaultValues: editValue || {}, // Gán giá trị mặc định cho form từ editValue
+    defaultValues: isEdit ? editValue : {}, // Gán giá trị mặc định cho form từ editValue
   });
   const { errors } = formState; // Lấy ra errors từ formState để hiển thị lỗi khi validate form
   const queryClient = useQueryClient(); // Lấy ra queryClient từ react-query để invalidate cache sau khi tạo cabin thành công
   const { isPending, mutate } = useMutation({
     // Lấy ra isPending và mutate từ hook useMutation để xử lý việc tạo cabin
-    mutationFn: ({data, editId}) => createCabin(data, editId), // Hàm tạo cabin, truyền vào Object data và id để tạo cabin (data, cabin)
+    mutationFn: ({ data, editId }) => createCabin(data, editId), // Hàm tạo cabin, truyền vào Object data và id để tạo cabin (data, cabin)
     onSuccess: () => {
       // Hàm chạy khi tạo cabin thành công
       toast.success(
@@ -77,7 +77,7 @@ function CreateCabinForm({ editCabin = {} }) {
     handleSubmit: dùng để xử lý sự kiện submit của form, nó sẽ gọi hàm onSubmit mà chúng ta truyền vào với dữ liệu của form
   */
   const onSubmit = (data) => {
-    isEdit ? mutate({data, editId}) : mutate({ data }); // Gọi hàm mutate để tạo cabin với dữ liệu data từ form, mutate sẽ gọi createCabin(data)
+    isEdit ? mutate({ data, editId }) : mutate({ data }); // Gọi hàm mutate để tạo cabin với dữ liệu data từ form, mutate sẽ gọi createCabin(data)
   };
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -166,33 +166,19 @@ function CreateCabinForm({ editCabin = {} }) {
         {/* Hiển thị thông báo lỗi nếu có */}
       </FormRow>
 
-      {isEdit ? (
-        <FormRow>
-          <Label htmlFor="image">Cabin photo</Label>
-          <FileInput
-            id="image"
-            accept="image/*"
-            type="file"
-            {...register("image")}
-          />
-          {errors?.image?.message && <Error>{errors.image.message}</Error>}{" "}
-          {/* Hiển thị thông báo lỗi nếu có */}
-        </FormRow>
-      ) : (
-        <FormRow>
-          <Label htmlFor="image">Cabin photo</Label>
-          <FileInput
-            id="image"
-            accept="image/*"
-            type="file"
-            {...register("image", {
-              required: "Image is required", // Bắt buộc nhập, nếu không nhập sẽ hiển thị thông báo lỗi này
-            })}
-          />
-          {errors?.image?.message && <Error>{errors.image.message}</Error>}{" "}
-          {/* Hiển thị thông báo lỗi nếu có */}
-        </FormRow>
-      )}
+      <FormRow>
+        <Label htmlFor="image">Cabin photo</Label>
+        <FileInput
+          id="image"
+          accept="image/*"
+          type="file"
+          {...register("image", {
+            required: isEdit ? false : "Image is required", // Bắt buộc nhập, nếu không nhập sẽ hiển thị thông báo lỗi này
+          })}
+        />
+        {errors?.image?.message && <Error>{errors.image.message}</Error>}{" "}
+        {/* Hiển thị thông báo lỗi nếu có */}
+      </FormRow>
 
       <FormRow>
         {/* type is an HTML attribute! */}

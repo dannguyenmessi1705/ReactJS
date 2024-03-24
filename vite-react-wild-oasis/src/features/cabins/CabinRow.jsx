@@ -1,10 +1,14 @@
 import styled from "styled-components";
 import { formatCurrency } from "../../utils/helpers.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteCabin } from "../../services/apiCabins.js";
+import {
+  deleteCabin as deleteCabinApi,
+  createCabin as createCabinApi,
+} from "../../services/apiCabins.js";
 import toast from "react-hot-toast"; // Nhập toast để sử dụng, lưu ý đã khai báo component <Toaster /> ở component cha
 import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm.jsx";
+import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
 
 const TableRow = styled.div`
   display: grid;
@@ -55,11 +59,12 @@ function CabinRow({ cabin }) {
     maxCapacity,
     regularPrice,
     discount,
+    description,
   } = cabin;
   const queryClient = useQueryClient(); // Lấy ra queryClient từ hook useQueryClient đã được định nghĩa ở App.jsx
-  const { isPending, mutate } = useMutation({
-    // Lấy ra isPending và mutate(function) từ hook useMutation để xử lý việc xóa cabin
-    mutationFn: deleteCabin, // Hàm xóa cabin
+  const { isPending: isLoadingDelete, mutate: deleteCabin } = useMutation({
+    // Lấy ra isLoadingDelete và mutate(function) từ hook useMutation để xử lý việc xóa cabin
+    mutationFn: deleteCabinApi, // Hàm xóa cabin
     onSuccess: () => {
       toast.success("Delete successfully");
       queryClient.invalidateQueries({
@@ -71,6 +76,23 @@ function CabinRow({ cabin }) {
     }, // Khi xóa thất bại, thông báo lỗi
   }); // Tạo một mutation để xóa cabin, lưu ý mutate là một function
 
+  const { isPending: isLoadingDuplicate, mutate: duplicate } = useMutation({
+    mutationFn: (cabin) => createCabinApi(cabin),
+    onSuccess: () => {
+      toast.success("Cabin duplicated successfully");
+      queryClient.invalidateQueries({
+        queryKey: ["cabins"],
+      });
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
+  const onDuplicate = () => {
+    const {id, ...duplicateCabin} = cabin;
+    duplicate({ ...duplicateCabin, name: `${name} (copy)` });
+  };
+
   return (
     <>
       <TableRow role="row">
@@ -80,14 +102,20 @@ function CabinRow({ cabin }) {
         <Price>{formatCurrency(regularPrice)}</Price>
         <Discount>{formatCurrency(discount)}</Discount>
         <div>
+          <button onClick={onDuplicate} disabled={isLoadingDelete}>
+            <HiSquare2Stack />
+          </button>
           <button
             onClick={() => setShowForm((showForm) => !showForm)}
-            disabled={isPending}
+            disabled={isLoadingDelete}
           >
-            {isPending ? "Editing" : "Edit"}
+            <HiPencil />
           </button>
-          <button onClick={() => mutate(cabinId)} disabled={isPending}>
-            {isPending ? "Deleting" : "Delete"}
+          <button
+            onClick={() => deleteCabin(cabinId)}
+            disabled={isLoadingDelete}
+          >
+            <HiTrash />
           </button>
         </div>
       </TableRow>
