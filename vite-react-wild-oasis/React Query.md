@@ -93,3 +93,4 @@ return (
     <button onClick={() => mutate(id)}>Delete</button> // Gọi hàm mutate để thực hiện mutation
 )
 ```
+>Lưu ý: `mutateFn` có thể nhận vào các tham số cần thiết để thực hiện mutation, nếu hàm thực hiện mutation có >= 2 tham số thì chúng ta cần truyền vào một object chứa các tham số đó. VD: `mutateFn: ({ id, data }) => { ... }`
