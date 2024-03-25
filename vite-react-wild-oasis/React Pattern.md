@@ -79,3 +79,73 @@ function App() {
   ); 
 } // Sử dụng component đã được bao bọc
 ```
+
+## 3. Compound Components Pattern
+### 3.1. Giới thiệu
+- `Compound Components Pattern` giúp chúng ta tạo ra các component có thể hoạt động cùng nhau mà không cần phải truyền 
+props từ component cha xuống component con.
+- `Compound Components Pattern` giúp chúng ta tạo ra các component có thể hoạt động cùng nhau mà không cần phải sử dụng `Render Props Pattern` hoặc `Higher-Order Component (HOC)`.
+- `Compound Components Pattern` giúp chúng ta tạo ra các component có thể hoạt động cùng nhau mà không cần phải sử dụng `Context API`.
+
+### 3.2. Cách sử dụng
+- Bước 1: Tạo ra một contextAPI chứa các thông tin cần chia sẻ giữa các component con.
+- Bước 2: Tạo ra một component cha chứa các component con.
+- Bước 3: Truyền thông tin từ component cha xuống các component con thông qua contextAPI.
+- Bước 4: Gán các component con vào trong component cha. (VD: Counter.Count = Count)
+
+### 3.3. Ví dụ
+- Tạo Compound Components Pattern với Counter:
+>Counter.js
+```jsx
+import { useState, createContext, useContext } from 'react';
+// Bước 1: Tạo ra một contextAPI chứa các thông tin cần chia sẻ giữa các component con.
+const CounterContext = createContext();
+
+// Bước 2: Tạo ra một component cha chứa các component con.
+function Counter ({children}) {
+  const [count, setCount] = useState(0);
+  const increment = () => setCount(count => count + 1);
+  const decrement = () => setCount(count => count - 1);
+  const context = {count, increment, decrement};
+  return (
+    <CounterContext.Provider value={context}>
+      {children}
+    </CounterContext.Provider>
+  )
+}
+
+// Bước 3: Truyền thông tin từ component cha xuống các component con thông qua contextAPI.
+function Count() {
+  const {count} = useContext(CounterContext);
+  return <p>{count}</p>
+}
+function Increment() {
+  const {increment} = useContext(CounterContext);
+  return <button onClick={increment}>Increment</button>
+}
+function Decrement() {
+  const {decrement} = useContext(CounterContext);
+  return <button onClick={decrement}>Decrement</button>
+}
+
+// Bước 4: Gán các component con vào trong component cha.
+Counter.Count = Count;
+Counter.Increment = Increment;
+Counter.Decrement = Decrement;
+
+export default Counter;
+```
+- Sau khi tạo xong các component con, chúng ta có thể sử dụng chúng như sau:
+>App.js
+```jsx
+import Counter from './Counter';
+
+function App() {
+  return (
+    <Counter>
+      <Counter.Increment /> {/* Sử dụng component Increment */}
+      <Counter.Count /> {/* Sử dụng component Count */}
+      <Counter.Decrement /> {/* Sử dụng component Decrement */}
+    </Counter> 
+  ) // Lưu ý: Các component con không cần truyền props từ component cha, nhưng phải đặt trong component cha mới sử dụng được contextAPI
+}
