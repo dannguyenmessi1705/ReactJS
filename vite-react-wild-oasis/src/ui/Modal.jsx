@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { HiXMark } from "react-icons/hi2";
 import { createPortal } from "react-dom"; // import createPortal từ react-dom để render modal ra ngoài root element
+import { cloneElement, createContext, useState } from "react";
+import { useContext } from "react";
 // createPortal nhận vào 2 tham số: element và root element để render element ra ngoài root element
 
 const StyledModal = styled.div`
@@ -52,16 +54,72 @@ const Button = styled.button`
   }
 `;
 
-export default function Modal({ children, onClose }) {
+const ModalContext = createContext(); // Tạo context để quản lý việc mở đóng modal
+
+function Modal({ children }) {
+  // Tạo Modal component để quản lý việc mở đóng modal
+  const [openName, setOpenName] = useState(""); // Tạo state openName để lưu tên modal đang mở
+
+  const close = () => setOpenName(""); // Tạo hàm close để đóng modal
+  const open = setOpenName; // Tạo hàm open để mở modal
+
+  const context = {
+    // Tạo context để truyền vào các component con
+    openName,
+    close,
+    open,
+  };
+
+  return (
+    <ModalContext.Provider value={context}>{children}</ModalContext.Provider> // Truyền context vào Provider để sử dụng ở các component con
+  );
+}
+
+function Open({ children, opens: opensWindowName }) {
+  // Tạo Open component để mở modal
+  const { open } = useContext(ModalContext); // Lấy ra hàm open từ context
+
+  return cloneElement(children, { onClick: () => open(opensWindowName) }); // Truyền hàm open vào onClick của children vì không thể truyền props vào children trực tiếp được nên sử dụng cloneElement
+}
+
+function Window({ children, name }) {
+  // Tạo Window component để hiển thị modal
+  const { openName, close } = useContext(ModalContext); // Lấy ra openName và hàm close từ context
+  console.log(openName, name); // Kiểm tra xem openName và name có bằng nhau không
+
+  if (openName !== name) return null; // Nếu openName khác name thì không hiển thị modal
+
   return createPortal(
+    // Sử dụng createPortal để render modal ra ngoài root element
     <Overlay>
       <StyledModal>
-        <Button onClick={onClose}>
+        <Button onClick={close}>
+          {" "}
+          {/* Tạo button để đóng modal */}
           <HiXMark />
         </Button>
-        <div>{children}</div>
+        <div>{cloneElement(children, { onClose: close })}</div>{" "}
+        {/* Truyền hàm close vào onClose của children vì không thể truyền props vào children trực tiếp được nên sử dụng cloneElement */}
       </StyledModal>
     </Overlay>,
     document.body // Render modal ra ngoài root element (document.body)
   );
 }
+
+Modal.Open = Open; // Gán Open vào Modal để sử dụng
+Modal.Window = Window; // Gán Window vào Modal để sử dụng
+export default Modal;
+
+// export default function Modal({ children, onClose }) {
+//   return createPortal(
+//     <Overlay>
+//       <StyledModal>
+//         <Button onClick={onClose}>
+//           <HiXMark />
+//         </Button>
+//         <div>{children}</div>
+//       </StyledModal>
+//     </Overlay>,
+//     document.body // Render modal ra ngoài root element (document.body)
+//   );
+// }
