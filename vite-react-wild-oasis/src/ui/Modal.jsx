@@ -82,7 +82,7 @@ function Open({ children, opens: opensWindowName }) {
   return cloneElement(children, { onClick: () => open(opensWindowName) }); // Truyền hàm open vào onClick của children vì không thể truyền props vào children trực tiếp được nên sử dụng cloneElement
 }
 
-function Window({ children, name }) {
+function Window({ children, name, cabin }) {
   // Tạo Window component để hiển thị modal
   const { openName, close } = useContext(ModalContext); // Lấy ra openName và hàm close từ context
   console.log(openName, name); // Kiểm tra xem openName và name có bằng nhau không
@@ -98,7 +98,9 @@ function Window({ children, name }) {
           {/* Tạo button để đóng modal */}
           <HiXMark />
         </Button>
-        <div>{cloneElement(children, { onClose: close })}</div>{" "}
+        <div>
+          {cloneElement(children, { onClose: close, editCabin: cabin })}
+        </div>{" "}
         {/* Truyền hàm close vào onClose của children vì không thể truyền props vào children trực tiếp được nên sử dụng cloneElement */}
       </StyledModal>
     </Overlay>,

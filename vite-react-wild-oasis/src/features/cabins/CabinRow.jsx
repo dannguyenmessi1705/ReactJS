@@ -6,7 +6,6 @@ import {
   createCabin as createCabinApi,
 } from "../../services/apiCabins.js";
 import toast from "react-hot-toast"; // Nhập toast để sử dụng, lưu ý đã khai báo component <Toaster /> ở component cha
-import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm.jsx";
 import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
 import Modal from "../../ui/Modal.jsx";
@@ -51,8 +50,6 @@ const Discount = styled.div`
 `;
 
 function CabinRow({ cabin }) {
-  const [showForm, setShowForm] = useState(false); // Tạo state showForm để hiển thị form tạo cabin
-
   const {
     id: cabinId,
     image,
@@ -106,9 +103,17 @@ function CabinRow({ cabin }) {
           <button onClick={onDuplicate} disabled={isLoadingDelete}>
             <HiSquare2Stack />
           </button>
-          <button onClick={() => setShowForm(true)} disabled={isLoadingDelete}>
-            <HiPencil />
-          </button>
+          <Modal>
+            <Modal.Open opens="cabin-form">
+              <button>
+                <HiPencil />
+              </button>
+            </Modal.Open>
+            <Modal.Window name="cabin-form" cabin={cabin}>
+              <CreateCabinForm
+              />
+            </Modal.Window>
+          </Modal>
           <button
             onClick={() => deleteCabin(cabinId)}
             disabled={isLoadingDelete}
@@ -117,14 +122,6 @@ function CabinRow({ cabin }) {
           </button>
         </div>
       </TableRow>
-      {showForm && (
-        <Modal onClose={() => setShowForm(false)}>
-          <CreateCabinForm
-            editCabin={cabin}
-            onClose={() => setShowForm(false)}
-          />
-        </Modal>
-      )}
     </>
   );
 }
