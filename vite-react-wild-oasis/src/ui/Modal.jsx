@@ -3,6 +3,7 @@ import { HiXMark } from "react-icons/hi2";
 import { createPortal } from "react-dom"; // import createPortal từ react-dom để render modal ra ngoài root element
 import { cloneElement, createContext, useState } from "react";
 import { useContext } from "react";
+import useOutsideClick from "../hooks/useOutsideClick";
 // createPortal nhận vào 2 tham số: element và root element để render element ra ngoài root element
 
 const StyledModal = styled.div`
@@ -85,14 +86,13 @@ function Open({ children, opens: opensWindowName }) {
 function Window({ children, name, cabin }) {
   // Tạo Window component để hiển thị modal
   const { openName, close } = useContext(ModalContext); // Lấy ra openName và hàm close từ context
-  console.log(openName, name); // Kiểm tra xem openName và name có bằng nhau không
-
+  const ref = useOutsideClick(close); // Sử dụng hook useOutsideClick để đóng modal khi click ra ngoài modal và truyền hàm close vào để đóng modal
   if (openName !== name) return null; // Nếu openName khác name thì không hiển thị modal
 
   return createPortal(
     // Sử dụng createPortal để render modal ra ngoài root element
     <Overlay>
-      <StyledModal>
+      <StyledModal ref={ref}> {/* Truyền ref vào StyledModal để sử dụng hook useOutsideClick */}
         <Button onClick={close}>
           {" "}
           {/* Tạo button để đóng modal */}
