@@ -46,7 +46,7 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-function CreateCabinForm({ editCabin = {} }) {
+function CreateCabinForm({ editCabin = {}, onClose }) {
   const { id: editId, ...editValue } = editCabin; // Lấy ra id và các giá trị cần edit từ editCabin
   const isEdit = Boolean(editId); // Kiểm tra xem có phải edit hay không
 
@@ -65,6 +65,7 @@ function CreateCabinForm({ editCabin = {} }) {
         `${isEdit ? "Cabin edited successfully" : "Cabin created successfully"}`
       );
       queryClient.invalidateQueries("cabins"); // Invalidate cache của query "cabins" để load lại dữ liệu mới
+      onClose?.(); // Gọi hàm onClose nếu có
       !isEdit && reset(); // Reset lại form
     },
     onError: (err) => {
@@ -80,7 +81,10 @@ function CreateCabinForm({ editCabin = {} }) {
     isEdit ? mutate({ data, editId }) : mutate({ data }); // Gọi hàm mutate để tạo cabin với dữ liệu data từ form, mutate sẽ gọi createCabin(data)
   };
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form
+      onSubmit={handleSubmit(onSubmit)}
+      type={onClose ? "modal" : "regular"}
+    >
       <FormRow>
         <Label htmlFor="name">Cabin name</Label>
         <Input
@@ -182,7 +186,9 @@ function CreateCabinForm({ editCabin = {} }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
+        <Button variation="secondary" type="reset" onClick={() => onClose?.()}>
+          {" "}
+          {/* onClose?.() sẽ gọi hàm onClose nếu có */}
           Cancel
         </Button>
         <Button disabled={isPending}>

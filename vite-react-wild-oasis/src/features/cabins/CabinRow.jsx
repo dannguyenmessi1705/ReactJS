@@ -9,6 +9,7 @@ import toast from "react-hot-toast"; // Nhập toast để sử dụng, lưu ý 
 import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm.jsx";
 import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
+import Modal from "../../ui/Modal.jsx";
 
 const TableRow = styled.div`
   display: grid;
@@ -89,7 +90,7 @@ function CabinRow({ cabin }) {
     },
   });
   const onDuplicate = () => {
-    const {id, ...duplicateCabin} = cabin;
+    const { id, ...duplicateCabin } = cabin;
     duplicate({ ...duplicateCabin, name: `${name} (copy)` });
   };
 
@@ -105,10 +106,7 @@ function CabinRow({ cabin }) {
           <button onClick={onDuplicate} disabled={isLoadingDelete}>
             <HiSquare2Stack />
           </button>
-          <button
-            onClick={() => setShowForm((showForm) => !showForm)}
-            disabled={isLoadingDelete}
-          >
+          <button onClick={() => setShowForm(true)} disabled={isLoadingDelete}>
             <HiPencil />
           </button>
           <button
@@ -119,7 +117,14 @@ function CabinRow({ cabin }) {
           </button>
         </div>
       </TableRow>
-      {showForm && <CreateCabinForm editCabin={cabin} />}
+      {showForm && (
+        <Modal onClose={() => setShowForm(false)}>
+          <CreateCabinForm
+            editCabin={cabin}
+            onClose={() => setShowForm(false)}
+          />
+        </Modal>
+      )}
     </>
   );
 }
