@@ -62,7 +62,8 @@ const Empty = styled.p`
 
 const TableContext = createContext(); // Tạo context
 
-function Table({ columns, children }) { // Thêm columns vào props của Table
+function Table({ columns, children }) {
+  // Thêm columns vào props của Table
   return (
     <TableContext.Provider value={{ columns }}>
       <StyledTable role="table">{children}</StyledTable>
@@ -70,8 +71,9 @@ function Table({ columns, children }) { // Thêm columns vào props của Table
   );
 }
 
-function Header({ children }) { // Thêm role="row" vào Header để đánh dấu là một hàng của bảng
-  const {columns} = useContext(TableContext);
+function Header({ children }) {
+  // Thêm role="row" vào Header để đánh dấu là một hàng của bảng
+  const { columns } = useContext(TableContext);
   return (
     <StyledHeader role="row" columns={columns} as="header">
       {children}
@@ -79,7 +81,8 @@ function Header({ children }) { // Thêm role="row" vào Header để đánh d�
   );
 }
 
-function Row({ columns, children }) { // Thêm columns vào props của Row để xác định số cột của hàng
+function Row({ columns, children }) {
+  // Thêm columns vào props của Row để xác định số cột của hàng
   return (
     <StyledHeader role="row" columns={columns}>
       {children}
@@ -87,7 +90,14 @@ function Row({ columns, children }) { // Thêm columns vào props của Row đ�
   );
 }
 
+function Body({ data, render }) {
+  // Thêm render vào props của Body
+  if (!data.length) return <Empty>No cabin available</Empty>; // Nếu không có data thì hiển thị Empty
+  return <StyledBody>{data.map(render)}</StyledBody>; // Sử dụng render được truyền vào là 1 hàm để render từng phần tử trong data thành các Row
+}
+
 Table.Header = Header;
 Table.Row = Row;
+Table.Body = Body;
 
 export default Table;

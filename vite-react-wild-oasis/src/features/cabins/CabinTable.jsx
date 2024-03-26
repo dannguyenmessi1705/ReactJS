@@ -42,8 +42,12 @@ function CabinTable() {
   if (isLoading) return <Spinner />;
 
   return (
-    <Table columns="0.6fr 1.8fr 2.2fr 1fr 1fr 1fr"> {/* Thêm columns */}
-      <Table.Header> {/* Thêm role="row" */}
+    <Table columns="0.6fr 1.8fr 2.2fr 1fr 1fr 1fr">
+      {" "}
+      {/* Thêm columns */}
+      <Table.Header>
+        {" "}
+        {/* Thêm role="row" */}
         <div></div>
         <div>Cabin</div>
         <div>Capacity</div>
@@ -51,9 +55,10 @@ function CabinTable() {
         <div>Discount</div>
         <div></div>
       </Table.Header>
-      {cabins.map((cabin) => (
-        <CabinRow key={cabin.id} cabin={cabin} />
-      ))}
+      <Table.Body
+        data={cabins}
+        render={(cabin) => <CabinRow key={cabin.id} cabin={cabin} />}
+      />
     </Table>
   );
 }
