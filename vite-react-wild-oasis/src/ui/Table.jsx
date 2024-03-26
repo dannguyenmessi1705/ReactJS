@@ -1,3 +1,4 @@
+import { createContext, useContext } from "react";
 import styled from "styled-components";
 
 const StyledTable = styled.div`
@@ -11,7 +12,7 @@ const StyledTable = styled.div`
 
 const CommonRow = styled.div`
   display: grid;
-  grid-template-columns: ${(props) => props.columns};
+  grid-template-columns: ${(props) => props.columns}; // Thêm columns vào props
   column-gap: 2.4rem;
   align-items: center;
   transition: none;
@@ -58,3 +59,35 @@ const Empty = styled.p`
   text-align: center;
   margin: 2.4rem;
 `;
+
+const TableContext = createContext(); // Tạo context
+
+function Table({ columns, children }) { // Thêm columns vào props của Table
+  return (
+    <TableContext.Provider value={{ columns }}>
+      <StyledTable role="table">{children}</StyledTable>
+    </TableContext.Provider>
+  );
+}
+
+function Header({ children }) { // Thêm role="row" vào Header để đánh dấu là một hàng của bảng
+  const {columns} = useContext(TableContext);
+  return (
+    <StyledHeader role="row" columns={columns} as="header">
+      {children}
+    </StyledHeader>
+  );
+}
+
+function Row({ columns, children }) { // Thêm columns vào props của Row để xác định số cột của hàng
+  return (
+    <StyledHeader role="row" columns={columns}>
+      {children}
+    </StyledHeader>
+  );
+}
+
+Table.Header = Header;
+Table.Row = Row;
+
+export default Table;
