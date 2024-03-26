@@ -9,6 +9,7 @@ import toast from "react-hot-toast"; // Nhập toast để sử dụng, lưu ý 
 import CreateCabinForm from "./CreateCabinForm.jsx";
 import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
 import Modal from "../../ui/Modal.jsx";
+import ConfirmDelete from "../../ui/ConfirmDelete";
 
 const TableRow = styled.div`
   display: grid;
@@ -92,37 +93,49 @@ function CabinRow({ cabin }) {
   };
 
   return (
-    <>
-      <TableRow role="row">
-        <Img src={image} />
-        <Cabin>{name}</Cabin>
-        <div>Fits up to {maxCapacity} guests</div>
-        <Price>{formatCurrency(regularPrice)}</Price>
-        <Discount>{formatCurrency(discount)}</Discount>
-        <div>
-          <button onClick={onDuplicate} disabled={isLoadingDelete}>
-            <HiSquare2Stack />
-          </button>
-          <Modal>
-            <Modal.Open opens="cabin-form">
-              <button>
-                <HiPencil />
-              </button>
-            </Modal.Open>
-            <Modal.Window name="cabin-form" cabin={cabin}>
-              <CreateCabinForm
-              />
-            </Modal.Window>
-          </Modal>
-          <button
-            onClick={() => deleteCabin(cabinId)}
-            disabled={isLoadingDelete}
-          >
-            <HiTrash />
-          </button>
-        </div>
-      </TableRow>
-    </>
+    <TableRow role="row">
+      <Img src={image} />
+      <Cabin>{name}</Cabin>
+      <div>Fits up to {maxCapacity} guests</div>
+      <Price>{formatCurrency(regularPrice)}</Price>
+      <Discount>{formatCurrency(discount)}</Discount>
+      <div>
+        <button onClick={onDuplicate} disabled={isLoadingDelete}>
+          <HiSquare2Stack />
+        </button>
+        {/* //  <CreateCabinForm /> và <button /> được render trong Modal.Window và Modal.Open với name tương ứng,
+            // vì không thể truyền props vào children trực tiếp nên sử dụng cloneElement để truyền props vào children
+            // và trong <CreateCabinForm /> và <button /> sử dụng props onClose để đóng modal, props của children sẽ lấy từ Modal.Window */}
+        <Modal>
+          <Modal.Open opens="edit-form">
+            <button>
+              <HiPencil />
+            </button>
+          </Modal.Open>
+          <Modal.Window name="edit-form" cabin={cabin}>
+            <CreateCabinForm />
+          </Modal.Window>
+        </Modal>
+
+        <Modal>
+          <Modal.Open opens="delete-form">
+            <button>
+              <HiTrash />
+            </button>
+          </Modal.Open>
+          <Modal.Window name="delete-form" cabin={cabin}>
+            <ConfirmDelete
+              onConfirm={() => deleteCabin(cabinId)}
+              disabled={isLoadingDelete}
+              resourceName={name}
+            />
+          </Modal.Window>
+        </Modal>
+        {/* 
+        Vì trong component children <ConfirmDelete /> có sử dụng props onConfirm, disabled, resourceName (các props này được định nghĩa ở trên nên không cần phải truyền từ Modal.Window vào ConfirmDelete nhờ cloneElement nữa)
+         */}
+      </div>
+    </TableRow>
   );
 }
 
