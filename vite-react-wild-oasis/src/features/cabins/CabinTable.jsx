@@ -5,6 +5,7 @@ import Spinner from "../../ui/Spinner";
 import CabinRow from "./CabinRow";
 import Table from "../../ui/Table";
 import Menus from "../../ui/Menus";
+import Empty from "../../ui/Empty"
 import { useSearchParams } from "react-router-dom";
 
 // const Table = styled.div`
@@ -44,6 +45,9 @@ function CabinTable() {
     queryFn: getCabin,
   });
   if (isLoading) return <Spinner />;
+
+  if (!cabins.length) return <Empty resource={"cabins"}/>
+
   // Filter
   if (currentFilter === "all") {
     cabinFilter = cabins;

@@ -1,6 +1,17 @@
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 
+export async function getBookings() {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*, cabins(name), guests(fullName, email)"); // Lấy ra tất cả các trường trong bảng bookings, và lấy ra tên của cabin và tên của khách hàng
+  if (error) {
+    console.error(error);
+    throw new Error("Booking not found");
+  }
+  return data;
+}
+
 export async function getBooking(id) {
   const { data, error } = await supabase
     .from("bookings")
