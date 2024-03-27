@@ -18,7 +18,6 @@ function useCheckin() {
       queryClient.invalidateQueries({
         active: true,
       });
-      navigate("/");
     },
     onError: () => {
       toast.error("There was an error while checking in");
