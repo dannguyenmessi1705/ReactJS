@@ -186,7 +186,7 @@ function CreateCabinForm({ editCabin = {}, onClose }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset" onClick={() => onClose?.()}>
+        <Button $variation="secondary" type="reset" onClick={() => onClose?.()}>
           {" "}
           {/* onClose?.() sẽ gọi hàm onClose nếu có */}
           Cancel

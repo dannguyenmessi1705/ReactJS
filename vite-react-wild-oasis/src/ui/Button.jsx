@@ -60,13 +60,13 @@ const Button = styled.button`
     ]} // nếu props.sizes === "small" thì sẽ áp dụng css của small và tương tự với các kích thước khác
   ${(props) =>
     variations[
-      props.variation
+      props.$variation
     ]} // nếu props.variation === "primary" thì sẽ áp dụng css của primary, và tương tự với các biến thể khác
 `;
 
 Button.defaultProps = {
   size: "medium",
-  variation: "primary",
+  $variation: "primary",
 };
 
 export default Button;

@@ -12,7 +12,7 @@ const StyledTable = styled.div`
 
 const CommonRow = styled.div`
   display: grid;
-  grid-template-columns: ${(props) => props.columns}; // Thêm columns vào props
+  grid-template-columns: ${(props) => props.$columns}; // Thêm columns vào props
   column-gap: 2.4rem;
   align-items: center;
   transition: none;
@@ -75,7 +75,7 @@ function Header({ children }) {
   // Thêm role="row" vào Header để đánh dấu là một hàng của bảng
   const { columns } = useContext(TableContext);
   return (
-    <StyledHeader role="row" columns={columns} as="header">
+    <StyledHeader role="row" $columns={columns} as="header">
       {children}
     </StyledHeader>
   );
@@ -84,7 +84,7 @@ function Header({ children }) {
 function Row({ columns, children }) {
   // Thêm columns vào props của Row để xác định số cột của hàng
   return (
-    <StyledHeader role="row" columns={columns}>
+    <StyledHeader role="row" $columns={columns}>
       {children}
     </StyledHeader>
   );
