@@ -1,8 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import styled, { css } from "styled-components";
 
-import SortBy from "./SortBy";
-
 const StyledFilter = styled.div`
   border: 1px solid var(--color-grey-100);
   background-color: var(--color-grey-0);
@@ -49,7 +47,7 @@ function Filter({ filterValue, filterOpions }) {
         <FilterButton
           key={option.key}
           onClick={() => handleFilter(option.key)}
-          active={`${option.key === currentFilter}`}
+          active={option.key === currentFilter}
           disabled={option.key === currentFilter}
         >
           {option.lable}
