@@ -38,6 +38,9 @@ function Filter({ filterValue, filterOpions }) {
   const [searchParam, setSearchParam] = useSearchParams();
   const currentFilter = searchParam.get(filterValue) || filterOpions.at(0).key;
   const handleFilter = (value) => {
+    if (searchParam.get("page")) {
+      searchParam.set("page", 1);
+    }
     searchParam.set(filterValue, value);
     setSearchParam(searchParam);
   };

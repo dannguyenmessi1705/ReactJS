@@ -1,10 +1,11 @@
 import { getToday } from "../utils/helpers";
+import { PAGE_SIZE } from "../utils/constants";
 import supabase from "./supabase";
 
-export async function getBookings(filter, sortBy) {
+export async function getBookings(filter, sortBy, page) {
   let query = supabase
     .from("bookings")
-    .select("*, cabins(name), guests(fullName, email)"); // Lấy ra tất cả các trường trong bảng bookings, và lấy ra tên của cabin và tên của khách hàng
+    .select("*, cabins(name), guests(fullName, email)", { count: "exact" }); // Lấy ra tất cả các trường trong bảng bookings, và lấy ra tên của cabin và tên của khách hàng, đồng thời trả về số lượng
 
   // Filter
   if (filter) {
@@ -14,15 +15,22 @@ export async function getBookings(filter, sortBy) {
 
   // Sort
   if (sortBy) {
-    query.order(sortBy.field, { ascending: sortBy.value === "asc" });
+    query = query.order(sortBy.field, { ascending: sortBy.value === "asc" });
   }
 
-  const { data, error } = await query; // Thực thi query
+  // Pagination
+  if (page) {
+    const from = (page - 1) * PAGE_SIZE;
+    const to = page * PAGE_SIZE - 1;
+    query = query.range(from, to);
+  }
+
+  const { data, error, count } = await query; // Thực thi query
   if (error) {
     console.error(error);
     throw new Error("Booking not found");
   }
-  return data;
+  return { data, count };
 }
 
 export async function getBooking(id) {
