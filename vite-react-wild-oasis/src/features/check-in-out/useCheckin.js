@@ -7,10 +7,11 @@ function useCheckin() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { mutate: checkin, isPending: isCheckingIn } = useMutation({
-    mutationFn: (bookingId) =>
+    mutationFn: ({ bookingId, bookings }) =>
       updateBooking(bookingId, {
         status: "checked-in",
         isPaid: true,
+        ...bookings,
       }),
     onSuccess: (data) => {
       toast.success(`Booking #${data.id} successfully checked in`);
