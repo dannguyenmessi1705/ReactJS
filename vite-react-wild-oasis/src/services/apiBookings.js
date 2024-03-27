@@ -1,11 +1,16 @@
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 
-export async function getBookings() {
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("*, cabins(name), guests(fullName, email)"); // Lấy ra tất cả các trường trong bảng bookings, và lấy ra tên của cabin và tên của khách hàng
-  if (error) {
+export async function getBookings(filter) {
+  let query = supabase
+  .from("bookings")
+  .select("*, cabins(name), guests(fullName, email)"); // Lấy ra tất cả các trường trong bảng bookings, và lấy ra tên của cabin và tên của khách hàng
+
+  if (filter) { // Nếu có filter thì thêm điều kiện filter vào query
+    query = query[filter?.method || "eq"](filter.field, filter.value) // Nếu filter.method không có thì mặc định là eq và so sánh với filter.value ở trường filter.field
+  }
+  const { data, error } = await query; // Thực thi query
+  if (error) { 
     console.error(error);
     throw new Error("Booking not found");
   }
