@@ -8,6 +8,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 // Toaster: là một component React dùng để hiển thị thông báo toast thông qua thư viện react-hot-toast
 
+import ProtectRoute from "./ui/ProtectRoute";
 import Dashboard from "./pages/Dashboard";
 import Bookings from "./pages/Bookings";
 import Cabins from "./pages/Cabins";
@@ -38,7 +39,15 @@ function App() {
       <GlobalStyled /> {/* Global styles */}
       <BrowserRouter>
         <Routes>
-          <Route element={<AppLayout />}>
+          <Route
+            element={
+              <ProtectRoute>
+                {" "}
+                {/* Đưa AppLayout vào ProtectRoute, kiểm tra nếu login thì cho phép, ko thì navigate /login */}
+                <AppLayout />
+              </ProtectRoute>
+            }
+          >
             <Route index element={<Navigate replace to="dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="bookings" element={<Bookings />} />

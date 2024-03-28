@@ -10,3 +10,15 @@ export async function login(email, password) {
   }
   return user;
 }
+
+// Kiểm tra người dùng hiện tại đã đăng nhập chưa
+export async function getCurrentUser() {
+  const { data: dataSession } = await supabase.auth.getSession(); // Lấy ra session hiện tại của người dùng ở trong Local Storage
+  if (!dataSession?.session) return null; // Nếu không có session thì trả về null
+
+  const { data, error } = await supabase.auth.getUser(); // Lấy ra thông tin người dùng hiện tại từ session ở trên
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data?.user; // Trả về thông tin người dùng
+}

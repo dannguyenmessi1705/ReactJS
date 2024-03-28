@@ -14,7 +14,15 @@ function LoginForm() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    login({ email, password });
+    login(
+      { email, password },
+      {
+        onSettled: () => {
+          setEmail("");
+          setPassword("");
+        }, // sau khi login, xoa cac truong email va password
+      }
+    );
   }
 
   return (
