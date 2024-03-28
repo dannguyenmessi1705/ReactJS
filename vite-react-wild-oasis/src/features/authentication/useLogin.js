@@ -12,7 +12,7 @@ function useLogin() {
     onSuccess: (user) => {
       toast.success("Login successfully");
       queryClient.setQueryData(["user"], user.user); // Sau khi login thanh cong, luu user vao cache de su dung
-      navigate("/");
+      navigate("/", { replace: true });
     },
     onError: () => {
       toast.error("Email or Password is not exists");

@@ -22,3 +22,11 @@ export async function getCurrentUser() {
   }
   return data?.user; // Trả về thông tin người dùng
 }
+
+// Logout, xóa session khỏi Local Storage
+export async function logout() {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    throw new Error(error.message);
+  }
+}
