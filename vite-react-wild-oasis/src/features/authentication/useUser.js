@@ -14,6 +14,7 @@ function useUser() {
     isLoading,
     isAuthenticated: user?.role === "authenticated",
     fetchStatus,
+    user,
   };
 }
 
