@@ -4,19 +4,28 @@ import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 
 import { useForm } from "react-hook-form";
+import useSignup from "./useSignup";
 
 // Email regex: /\S+@\S+\.\S+/
 
 function SignupForm() {
+  const { signup, isLoadingSignup } = useSignup();
   const {
     register,
     getValues,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data);
+    const { fullName, email, password } = data;
+    signup(
+      { email, password, fullName },
+      {
+        onSettled: () => reset(), // Sau khi thuc hien (ke ca loi hoac thanh cong) thi reset form
+      }
+    );
   };
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>

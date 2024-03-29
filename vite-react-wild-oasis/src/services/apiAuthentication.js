@@ -30,3 +30,23 @@ export async function logout() {
     throw new Error(error.message);
   }
 }
+
+// Signup
+export async function signup(email, password, fullName) {
+  const { data, error } = await supabase.auth.signUp({
+    email, // Email
+    password, // Mật khẩu
+    options: {
+      // Thông tin khác của người dùng, đây là mục tùy chọn
+      data: {
+        // Dữ liệu
+        fullName, // Tên đầy đủ
+        avatar: "", // Ảnh đại diện
+      },
+    },
+  }); // Tạo tài khoản mới
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+}
