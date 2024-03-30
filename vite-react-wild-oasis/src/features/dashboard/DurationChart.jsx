@@ -1,4 +1,14 @@
 import styled from "styled-components";
+import Heading from "../../ui/Heading";
+import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+} from "recharts";
+import { useDarkMode } from "../../contexts/DarkModeContext";
 
 const ChartBox = styled.div`
   /* Box */
@@ -104,10 +114,10 @@ const startDataDark = [
   },
 ];
 
-function prepareData(startData, stays) {
+function prepareData(startData, stays) { // Hàm prepareData nhận vào một mảng startData và một mảng stays, trả về một mảng dữ liệu đã được chuẩn bị để hiển thị trên biểu đồ
   // A bit ugly code, but sometimes this is what it takes when working with real data 😅
 
-  function incArrayValue(arr, field) {
+  function incArrayValue(arr, field) { // Hàm incArrayValue nhận vào một mảng arr và một field, tăng giá trị của phần tử có duration bằng field lên 1
     return arr.map((obj) =>
       obj.duration === field ? { ...obj, value: obj.value + 1 } : obj
     );
@@ -115,9 +125,9 @@ function prepareData(startData, stays) {
 
   const data = stays
     .reduce((arr, cur) => {
-      const num = cur.numNights;
-      if (num === 1) return incArrayValue(arr, "1 night");
-      if (num === 2) return incArrayValue(arr, "2 nights");
+      const num = cur.numNights; // num là số đêm lưu trú của một stay
+      if (num === 1) return incArrayValue(arr, "1 night"); 
+      if (num === 2) return incArrayValue(arr, "2 nights"); 
       if (num === 3) return incArrayValue(arr, "3 nights");
       if ([4, 5].includes(num)) return incArrayValue(arr, "4-5 nights");
       if ([6, 7].includes(num)) return incArrayValue(arr, "6-7 nights");
@@ -126,7 +136,52 @@ function prepareData(startData, stays) {
       if (num >= 21) return incArrayValue(arr, "21+ nights");
       return arr;
     }, startData)
-    .filter((obj) => obj.value > 0);
+    .filter((obj) => obj.value > 0); // Hàm filter trả về một mảng mới chứa các phần tử của mảng đã cho thoả mãn điều kiện đã cho
 
-  return data;
+  return data; // Trả về mảng dữ liệu đã được chuẩn bị
 }
+
+function DurationChart({ confirmedStays }) {
+  const { darkMode } = useDarkMode();
+  const startData = darkMode ? startDataDark : startDataLight; 
+  const data = prepareData(startData, confirmedStays); // data là mảng dữ liệu đã được chuẩn bị để hiển thị trên biểu đồ
+
+  return (
+    <ChartBox> {/* Component ChartBox được sử dụng để tạo một hộp chứa biểu đồ */}
+      <Heading as="h2">Stay duration summary</Heading> {/* Component Heading được sử dụng để tạo tiêu đề */}
+      <ResponsiveContainer width="100%" height={240}> {/* Component ResponsiveContainer được sử dụng để tạo một container có thể thay đổi kích thước theo kích thước của cha */}
+        <PieChart> {/* Component PieChart được sử dụng để tạo biểu đồ dạng pie */}
+          <Pie // Component Pie được sử dụng để tạo một pie trong biểu đồ
+            data={data} // data là thuộc tính xác định dữ liệu của pie
+            nameKey="duration" // nameKey là thuộc tính xác định tên của pie
+            dataKey="value" // dataKey là thuộc tính xác định dữ liệu nào sẽ được sử dụng làm dữ liệu cho pie
+            innerRadius={85} // innerRadius là thuộc tính xác định bán kính trong của pie
+            outerRadius={110}   // outerRadius là thuộc tính xác định bán kính ngoài của pie
+            cx="40%" // cx là thuộc tính xác định tọa độ x của pie
+            cy="50%" // cy là thuộc tính xác định tọa độ y của pie
+            paddingAngle={3} // paddingAngle là thuộc tính xác định góc giữa các pie
+          >
+            {data.map((entry) => ( // Hàm map trả về một mảng mới chứa các phần tử đã được xử lý từ mảng đã cho
+              <Cell // Component Cell được sử dụng để tạo một cell trong pie
+                fill={entry.color} // fill là thuộc tính xác định màu sắc của cell
+                stroke={entry.color} // stroke là thuộc tính xác định màu sắc của đường viền của cell
+                key={entry.duration} // key là thuộc tính xác định key của cell
+              />
+            ))}
+          </Pie>
+          <Tooltip /> {/* Component Tooltip được sử dụng để tạo tooltip cho biểu đồ */}
+          <Legend // Component Legend được sử dụng để tạo legend cho biểu đồ
+            verticalAlign="middle" // verticalAlign là thuộc tính xác định vị trí của legend theo chiều dọc
+            align="right" // align là thuộc tính xác định vị trí của legend theo chiều ngang
+            width="30%" // width là thuộc tính xác định độ rộng của legend
+            layout="vertical" // layout là thuộc tính xác định kiểu hiển thị của legend
+            iconSize={15} // iconSize là thuộc tính xác định kích thước của icon trong legend
+            iconType="circle" // iconType là thuộc tính xác định kiểu của icon trong legend
+          />
+        </PieChart>
+      </ResponsiveContainer>
+    </ChartBox>
+  );
+}
+
+export default DurationChart;
