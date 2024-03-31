@@ -4,7 +4,10 @@ import { useLocalStorageState } from "../hooks/useLocalStorageState";
 const DarkModeContext = createContext();
 
 function DarkModeProvider({ children }) {
-  const [darkMode, setDarkMode] = useLocalStorageState(false, "isDarkMode");
+  const [darkMode, setDarkMode] = useLocalStorageState(
+    window.matchMedia("(prefers-color-scheme: dark)").matches,
+    "isDarkMode"
+  ); // Mặc định sẽ lấy giá trị từ prefers-color-scheme: dark của thiết bị là true hoặc false
 
   useEffect(() => {
     if (darkMode) {
@@ -34,4 +37,4 @@ function useDarkMode() {
   return context;
 }
 
-export {useDarkMode, DarkModeProvider};
+export { useDarkMode, DarkModeProvider };
