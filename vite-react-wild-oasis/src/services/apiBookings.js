@@ -100,6 +100,7 @@ export async function getStaysTodayActivity() {
     throw new Error("Bookings could not get loaded");
   }
   return data;
+  
 }
 
 export async function updateBooking(id, obj) {
