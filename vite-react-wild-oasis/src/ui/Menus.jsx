@@ -90,6 +90,7 @@ function Toggle({ id }) {
   // Tạo Toggle component để mở menu
   const { openId, open, close, setPosition } = useContext(MenusContext); // Lấy ra openId, open, close, setPosition từ context
   function handleClick(event) {
+    event.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài button
     // Tạo hàm handleClick để xử lý sự kiện click
     const rect = event.target.closest("button").getBoundingClientRect(); // Lấy ra vị trí của button được click
     setPosition({
@@ -113,7 +114,7 @@ function Toggle({ id }) {
 function List({ id, children }) {
   // Tạo List component để hiển thị menu
   const { openId, position, close } = useContext(MenusContext); // Lấy ra openId, position, close từ context
-  const ref = useOutsideClick(close); // Sử dụng hook useOutsideClick để đóng menu khi click ra ngoài menu và truyền hàm close vào để đóng menu
+  const ref = useOutsideClick(close, false); // Sử dụng hook useOutsideClick để đóng menu khi click ra ngoài menu và truyền hàm close vào để đóng menu, truyền false để ngăn chặn sự kiện click lan ra ngoài menu
 
   if (openId !== id) return null; // Nếu openId khác id thì không hiển thị menu
 
